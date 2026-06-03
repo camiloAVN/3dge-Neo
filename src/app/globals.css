@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-unik-white: #FFFFFF;
+  --color-unik-bg: #F8F9FA;
+  --color-unik-dark: #111111;
+  --color-unik-gray: #444444;
+  --color-unik-border: #E5E5E5;
+  --color-unik-accent: #D61C1C;
+}
+
+/* Hide password reveal buttons */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="text"]::-ms-reveal,
+input[type="text"]::-ms-clear {
+  display: none;
+}
+
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-password-reveal {
+  display: none !important;
+}
+
+@keyframes heroProgressBar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}

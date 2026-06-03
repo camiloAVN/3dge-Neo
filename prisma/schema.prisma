@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+}
+
+model AppSettings {
+  id         String @id @default("singleton")
+  adminEmail String @default("")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  isActive    Boolean   @default(true)
+  isFeatured  Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  products    Product[]
+}
+
+// Admin-defined variant types: "Talla", "Color", "Material", etc.
+model VariantType {
+  id     String         @id @default(uuid())
+  name   String         @unique
+  values VariantValue[]
+}
+
+// Possible values for each type: "S", "M", "Rojo", "Algodón", etc.
+model VariantValue {
+  id            String                @id @default(uuid())
+  value         String
+  variantTypeId String
+  variantType   VariantType           @relation(fields: [variantTypeId], references: [id])
+  variantValues ProductVariantValue[]
+
+  @@unique([variantTypeId, value])
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  inStock     Int
+  price       Float    @default(0)
+  slug        String   @unique
+  tags        String[] @default([])
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  images     ProductImage[]
+  orderItems OrderItem[]
+  variants   ProductVariant[]
+
+  @@index([categoryId])
+}
+
+// A specific variant combination for a product (e.g. Red + Size M)
+model ProductVariant {
+  id      String  @id @default(uuid())
+  price   Float?
+  inStock Int     @default(0)
+  sku     String? @unique
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  values     ProductVariantValue[]
+  orderItems OrderItem[]
+}
+
+model ProductVariantValue {
+  productVariantId String
+  variantValueId   String
+
+  productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  variantValue   VariantValue   @relation(fields: [variantValueId], references: [id])
+
+  @@id([productVariantId, variantValueId])
+}
+
+model ProductImage {
+  id        Int    @id @default(autoincrement())
+  url       String
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  role          Role      @default(user)
+  image         String?
+  isActive      Boolean   @default(true)
+  cargo         String?
+  createdAt     DateTime  @default(now())
+
+  address UserAddress?
+  orders  Order[]
+}
+
+model Country {
+  id             String         @id
+  name           String
+  userAddresses  UserAddress[]
+  orderAddresses OrderAddress[]
+}
+
+model UserAddress {
+  id         String  @id @default(uuid())
+  firstName  String
+  lastName   String
+  address    String
+  address2   String?
+  postalCode String
+  phone      String
+  city       String
+
+  countryId String
+  country   Country @relation(fields: [countryId], references: [id])
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Order {
+  id            String    @id @default(uuid())
+  subTotal      Float
+  tax           Float
+  total         Float
+  itemsInOrder  Int
+  isPaid        Boolean   @default(false)
+  paidAt        DateTime?
+  isDelivered   Boolean   @default(false)
+  deliveredAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  transactionId String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  orderItems   OrderItem[]
+  orderAddress OrderAddress?
+}
+
+model OrderItem {
+  id           String  @id @default(uuid())
+  quantity     Int
+  price        Float
+  variantLabel String? // human-readable, e.g. "Talla: M / Color: Rojo"
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  productVariantId String?
+  productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
+}
+
+model OrderAddress {
+  id         String  @id @default(uuid())
+  firstName  String
+  lastName   String
+  address    String
+  address2   String?
+  postalCode String
+  city       String
+  phone      String
+
+  countryId String
+  country   Country @relation(fields: [countryId], references: [id])
+
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id])
+}

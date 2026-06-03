@@ -1,0 +1,229 @@
+/* ============================================================
+   /products — Neoplastic category selector
+   Three shaped buttons: NEO rectangle · HEXA hexagon · CREA hammer
+   ============================================================ */
+
+.container {
+  --ink:    #141210;
+  --paper:  #f6f4ee;
+  --red:    #e63b22;
+  --yellow: #f5c200;
+  --blue:   #1f3fd6;
+  --line:   18px;
+  --border: 20px;
+  --serif:  var(--font-bodoni-moda), Georgia, serif;
+  --mono:   var(--font-space-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Full-screen ink frame */
+.page {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: var(--line);
+  padding: var(--border);
+}
+
+/* Top paper strip */
+.topBar {
+  flex: 0 0 auto;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px clamp(20px, 2vw, 32px);
+}
+
+.topBrand {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(20px, 1.8vw, 30px);
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+
+.topLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .20em;
+  text-transform: uppercase;
+  color: #6c685f;
+}
+
+.backLink {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: gap .25s ease;
+}
+.backLink:hover { gap: 14px; }
+
+/* Main area — three shapes centered */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(24px, 3.5vw, 56px);
+  min-height: 0;
+  padding: 20px 0;
+}
+
+/* ── SHARED SHAPE BASE ── */
+.shape {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+}
+.shape::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 0 rgba(20,18,16,.4);
+  transition: box-shadow .35s cubic-bezier(.2,.8,.2,1);
+  pointer-events: none;
+  z-index: 1;
+}
+.shape:hover { transform: translateY(-6px) scale(1.02); }
+.shape:hover::after { box-shadow: inset 0 0 0 9px rgba(20,18,16,.4); }
+
+.shapeNum {
+  font-family: var(--mono);
+  font-size: clamp(10px, .78vw, 13px);
+  font-weight: 700;
+  letter-spacing: .20em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 2;
+}
+.shapeLabel {
+  font-family: var(--serif);
+  font-weight: 900;
+  line-height: .9;
+  letter-spacing: -.025em;
+  position: relative;
+  z-index: 2;
+}
+.shapeArrow {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(12px, 1vw, 17px);
+  align-self: flex-end;
+  position: relative;
+  z-index: 2;
+  transition: transform .3s ease;
+}
+.shape:hover .shapeArrow { transform: translateX(8px); }
+
+/* ── 01 · NEO — tall blue vertical rectangle ── */
+.neo {
+  background: var(--blue);
+  color: var(--paper);
+  width: clamp(110px, 11vw, 175px);
+  height: clamp(300px, 55vh, 500px);
+  justify-content: space-between;
+  padding: clamp(20px, 2.2vw, 36px) clamp(18px, 1.8vw, 30px);
+}
+.neo .shapeLabel {
+  font-size: clamp(32px, 4vw, 64px);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  align-self: flex-end;
+  letter-spacing: -.02em;
+}
+.neo .shapeArrow { align-self: flex-start; }
+
+/* ── 02 · HEXA — yellow hexagon ── */
+.hexa {
+  background: var(--yellow);
+  color: var(--ink);
+  /* width × 0.866 = height for a regular hexagon */
+  width: clamp(230px, 25vw, 390px);
+  height: clamp(200px, 21.5vw, 338px);
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.2vw, 20px);
+  padding: clamp(24px, 3vw, 48px) clamp(60px, 7vw, 110px);
+}
+.hexa .shapeLabel {
+  font-size: clamp(30px, 3.8vw, 62px);
+  text-align: center;
+}
+.hexa .shapeArrow { align-self: center; }
+
+/* ── 03 · CREA — red hammer ── */
+.crea {
+  background: var(--red);
+  color: var(--paper);
+  width: clamp(175px, 18vw, 295px);
+  height: clamp(300px, 52vh, 490px);
+  /* hammer: wide head (top 33%) + narrow handle (bottom 67%) */
+  clip-path: polygon(
+    7%  0%,  93%  0%,
+    93% 33%, 63%  33%,
+    63% 100%, 37% 100%,
+    37% 33%, 7%  33%
+  );
+  justify-content: space-between;
+  padding: clamp(18px, 2vw, 32px) clamp(22px, 2.5vw, 40px);
+}
+.crea .shapeLabel {
+  font-size: clamp(22px, 2.8vw, 46px);
+  margin-top: auto;
+}
+.crea .shapeArrow { align-self: center; }
+
+/* ── RESPONSIVE ≤ 820px ── */
+@media (max-width: 820px) {
+  .container { --line: 12px; --border: 12px; }
+  .page { position: relative; min-height: 100dvh; }
+  .main {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 14px 0;
+  }
+
+  /* NEO — smaller vertical on mobile */
+  .neo {
+    width: clamp(80px, 22vw, 130px);
+    height: clamp(200px, 48vw, 320px);
+  }
+  .neo .shapeLabel { font-size: clamp(20px, 5vw, 38px); }
+
+  /* HEXA — smaller hexagon */
+  .hexa {
+    width: clamp(150px, 38vw, 240px);
+    height: clamp(130px, 33vw, 208px);
+    padding: 20px 44px;
+  }
+  .hexa .shapeLabel { font-size: clamp(18px, 5vw, 36px); }
+
+  /* CREA — smaller hammer */
+  .crea {
+    width: clamp(130px, 32vw, 220px);
+    height: clamp(200px, 48vw, 320px);
+  }
+  .crea .shapeLabel { font-size: clamp(16px, 4vw, 30px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shape, .shape::after, .shape:hover, .shapeArrow { transition: none !important; }
+}

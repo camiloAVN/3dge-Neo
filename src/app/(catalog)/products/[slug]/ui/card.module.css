@@ -1,0 +1,195 @@
+/* ============================================================
+   NeoProductCard — Neoplastic product card
+   ============================================================ */
+
+.card {
+  --ink:    #141210;
+  --paper:  #f6f4ee;
+  --yellow: #f5c200;
+  --blue:   #1f3fd6;
+  --red:    #e63b22;
+  --serif:  var(--font-bodoni-moda), Georgia, serif;
+  --mono:   var(--font-space-mono), ui-monospace, monospace;
+
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  position: relative;
+  overflow: hidden;
+  transition: transform .3s cubic-bezier(.2,.8,.2,1);
+}
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 0 var(--ink);
+  transition: box-shadow .3s cubic-bezier(.2,.8,.2,1);
+  pointer-events: none;
+  z-index: 1;
+}
+.card:hover { transform: translateY(-4px); }
+.card:hover::after { box-shadow: inset 0 0 0 6px var(--ink); }
+
+/* Image area */
+.imageWrap {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #e9e6dd;
+  display: block;
+  flex-shrink: 0;
+}
+.image {
+  object-fit: cover;
+  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.card:hover .image { transform: scale(1.05); }
+
+/* Out of stock badge */
+.badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: var(--red);
+  color: #f6f4ee;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 5px 9px;
+  z-index: 2;
+}
+
+/* No-image placeholder */
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background-color: #e9e6dd;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(20,18,16,.06) 0 2px,
+    transparent 2px 13px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.placeholderFrame {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--ink);
+  position: relative;
+  opacity: .35;
+}
+.placeholderFrame::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 2px solid var(--ink);
+}
+
+/* Info */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 14px 14px;
+  border-top: 2px solid var(--ink);
+  flex: 1;
+}
+
+.title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(15px, 1.2vw, 19px);
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  text-decoration: none;
+  display: block;
+  transition: color .2s;
+}
+.title:hover { color: var(--blue); }
+
+.price {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(12px, .95vw, 15px);
+  color: var(--ink);
+  letter-spacing: .04em;
+}
+
+/* Controls row */
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-top: auto;
+}
+
+/* Quantity selector */
+.qty {
+  display: flex;
+  align-items: stretch;
+  border: 2px solid var(--ink);
+  flex-shrink: 0;
+}
+.qtyBtn {
+  width: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  transition: background .2s, color .2s;
+}
+.qtyBtn:hover:not(:disabled) { background: var(--ink); color: var(--yellow); }
+.qtyBtn:disabled { opacity: .3; cursor: not-allowed; }
+.qtyNum {
+  min-width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+  border-left: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+  user-select: none;
+}
+
+/* Add to cart button */
+.addBtn {
+  flex: 1;
+  border: none;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(10px, .82vw, 12px);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  gap: 6px;
+  transition: background .25s, color .25s, gap .25s;
+  background: var(--ink);
+  color: var(--yellow);
+  min-height: 38px;
+}
+.addBtn:hover:not(:disabled) { background: var(--blue); color: #f6f4ee; gap: 12px; }
+.addBtn:disabled { background: #ccc9c2; color: #9b9690; cursor: not-allowed; }
+.addBtnAdded    { background: var(--blue) !important; color: #f6f4ee !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .card::after, .image, .addBtn, .qtyBtn { transition: none !important; }
+}
