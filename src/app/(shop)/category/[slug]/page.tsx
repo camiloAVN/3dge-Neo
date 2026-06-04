@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props) {
   const category = await prisma.category.findUnique({ where: { slug } });
   if (!category) return { title: 'Categoría no encontrada' };
   return {
-    title: `${category.name} | UNIK`,
+    title: `${category.name} | 3DGE`,
     description: category.description ?? `Explora todos los productos de ${category.name}`,
   };
 }

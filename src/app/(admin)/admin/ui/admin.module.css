@@ -1,0 +1,130 @@
+/* ============================================================
+   3DGE Admin — CSS Module
+   Neoplastic ink sidebar + paper content area
+   ============================================================ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 240px;
+  background: #141210;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  font-family: var(--font-space-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ──────────────────────────────────────────────── */
+.header {
+  height: 60px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(246,244,238,.10);
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.brandLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #f6f4ee;
+  text-decoration: none;
+  font-family: var(--font-bodoni-moda), Georgia, serif;
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: -.04em;
+  flex-shrink: 0;
+}
+
+.adminBadge {
+  font-family: var(--font-space-mono), ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  background: #f5c200;
+  color: #141210;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+
+/* ── NAV ─────────────────────────────────────────────────── */
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #6c685f;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+
+.navItem:hover {
+  color: #f6f4ee;
+  background: rgba(246,244,238,.05);
+}
+
+.navItemActive {
+  color: #f5c200;
+  border-left-color: #f5c200;
+  background: rgba(245,194,0,.07);
+}
+
+.navNum {
+  font-size: 9px;
+  color: #3a3835;
+  letter-spacing: .08em;
+  min-width: 18px;
+  flex-shrink: 0;
+}
+.navItemActive .navNum { color: #8a7600; }
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+.footer {
+  padding: 10px 10px;
+  border-top: 1px solid rgba(246,244,238,.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.footerItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #6c685f;
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: color .15s ease;
+}
+.footerItem:hover { color: #f6f4ee; }

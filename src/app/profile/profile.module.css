@@ -321,9 +321,6 @@
   .container { --line: 12px; --border: 12px; }
 
   .page {
-    position: relative;
-    min-height: 100dvh;
-    z-index: auto;
     flex-direction: column;
   }
 
@@ -342,7 +339,7 @@
   .blueTop { display: none; }
   .mark { font-size: 22px; }
 
-  .right { flex: 1; overflow-y: visible; }
+  .right { overflow-y: auto; }
   .rightInner { max-width: 100%; }
 
   .grid { grid-template-columns: 1fr; }

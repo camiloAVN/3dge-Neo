@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-unik-white: #FFFFFF;
-  --color-unik-bg: #F8F9FA;
-  --color-unik-dark: #111111;
-  --color-unik-gray: #444444;
-  --color-unik-border: #E5E5E5;
-  --color-unik-accent: #D61C1C;
+  --color-3dge-paper: #f6f4ee;
+  --color-3dge-bg: #F8F9FA;
+  --color-3dge-ink: #141210;
+  --color-3dge-gray: #6c685f;
+  --color-3dge-border: #ccc9c2;
+  --color-3dge-yellow: #f5c200;
+  --color-3dge-blue: #1f3fd6;
+  --color-3dge-red: #e63b22;
 }
 
 /* Hide password reveal buttons */

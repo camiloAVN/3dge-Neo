@@ -10,16 +10,47 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
+    <div style={{ minHeight: '100vh', background: '#f6f4ee' }}>
       <AdminSidebar />
-      <div className="ml-60 flex flex-col min-h-screen">
-        <header className="h-[60px] bg-white border-b border-[#E5E5E5] px-8 flex items-center justify-between flex-shrink-0">
-          <span className="text-sm text-[#444444]">Panel de administración</span>
-          <span className="text-sm font-medium text-[#111111]">{session.user.name}</span>
+
+      <div style={{ marginLeft: 240, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+
+        {/* Header bar */}
+        <header style={{
+          height: 60,
+          background: '#141210',
+          padding: '0 32px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexShrink: 0,
+        }}>
+          <span style={{
+            fontFamily: 'var(--font-space-mono), ui-monospace, monospace',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '.16em',
+            textTransform: 'uppercase',
+            color: '#6c685f',
+          }}>
+            Panel de administración
+          </span>
+          <span style={{
+            fontFamily: 'var(--font-space-mono), ui-monospace, monospace',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '.10em',
+            textTransform: 'uppercase',
+            color: '#f6f4ee',
+          }}>
+            {session.user.name}
+          </span>
         </header>
-        <main className="flex-1 p-8">
+
+        <main style={{ flex: 1, padding: 32 }}>
           {children}
         </main>
+
       </div>
     </div>
   );

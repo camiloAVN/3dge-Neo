@@ -48,7 +48,7 @@ export function OrderNotificationEmail({
 
           {/* Header */}
           <Section style={header}>
-            <Text style={brand}>UNIK</Text>
+            <Text style={brand}>3DGE</Text>
             <Text style={headerSub}>Nueva orden recibida</Text>
           </Section>
 
@@ -168,7 +168,7 @@ export function OrderNotificationEmail({
           {/* Footer */}
           <Section style={footer}>
             <Text style={footerText}>
-              Este mensaje es automático enviado desde el sistema de UNIK.
+              Este mensaje es automático enviado desde el sistema de 3DGE.
             </Text>
           </Section>
 

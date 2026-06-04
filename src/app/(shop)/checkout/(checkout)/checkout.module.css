@@ -411,9 +411,6 @@
   .container { --line: 12px; --border: 12px; }
 
   .page {
-    position: relative;
-    min-height: 100dvh;
-    z-index: auto;
     flex-direction: column;
   }
 

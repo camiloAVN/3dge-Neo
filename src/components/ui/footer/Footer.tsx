@@ -8,8 +8,8 @@ export const Footer = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center flex-shrink-0">
             <Image
-              src="/imgs/logo_2.png"
-              alt="UNIK"
+              src="/imgs/logo.png"
+              alt="3DGE"
               height={44}
               width={140}
               className="h-9 w-auto object-contain"
@@ -29,7 +29,7 @@ export const Footer = () => {
           </nav>
 
           <p className="text-xs text-[#444444]">
-            © {new Date().getFullYear()} UNIK. Todos los derechos reservados.
+            © {new Date().getFullYear()} 3DGE. Todos los derechos reservados.
           </p>
         </div>
       </div>

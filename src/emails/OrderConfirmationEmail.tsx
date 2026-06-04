@@ -42,7 +42,7 @@ export function OrderConfirmationEmail({
 
           {/* Header */}
           <Section style={header}>
-            <Text style={brand}>UNIK</Text>
+            <Text style={brand}>3DGE</Text>
             <Text style={headerSub}>Confirmación de compra</Text>
           </Section>
 
@@ -139,8 +139,8 @@ export function OrderConfirmationEmail({
 
           {/* Footer */}
           <Section style={footer}>
-            <Text style={footerText}>UNIK · Moda con estilo</Text>
-            <Text style={footerText}>© {new Date().getFullYear()} UNIK. Todos los derechos reservados.</Text>
+            <Text style={footerText}>3DGE · Organizadores de pared</Text>
+            <Text style={footerText}>© {new Date().getFullYear()} 3DGE. Todos los derechos reservados.</Text>
           </Section>
 
         </Container>

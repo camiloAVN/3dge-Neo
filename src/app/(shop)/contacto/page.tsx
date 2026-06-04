@@ -22,7 +22,7 @@ const CONTACT_INFO = [
   {
     icon: LuMail,
     label: 'Correo',
-    value: 'contacto@unik.com',
+    value: 'contacto@3dge.co',
   },
   {
     icon: LuClock,
@@ -32,8 +32,8 @@ const CONTACT_INFO = [
 ];
 
 const SOCIAL = [
-  { icon: LuInstagram, label: '@unik.store', href: '#' },
-  { icon: LuFacebook,  label: 'UNIK Store',  href: '#' },
+  { icon: LuInstagram, label: '@3dge.co', href: '#' },
+  { icon: LuFacebook,  label: '3DGE Store',  href: '#' },
 ];
 
 export default function ContactPage() {
