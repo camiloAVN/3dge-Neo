@@ -1,0 +1,580 @@
+/* ============================================================
+   3DGE /orders — CSS Module
+   Neoplastic two-panel layout shared by list + detail pages
+   ============================================================ */
+
+.container {
+  --ink:    #141210;
+  --paper:  #f6f4ee;
+  --red:    #e63b22;
+  --yellow: #f5c200;
+  --blue:   #1f3fd6;
+  --line:   18px;
+  --border: 20px;
+  --serif:  var(--font-bodoni-moda), Georgia, serif;
+  --mono:   var(--font-space-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── OUTER FRAME ─────────────────────────────────────────── */
+.page {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: var(--ink);
+  display: flex;
+  gap: var(--line);
+  padding: var(--border);
+}
+
+/* ── LEFT — BLUE BRAND PANEL ─────────────────────────────── */
+.left {
+  flex: 0 0 26%;
+  min-width: 160px;
+  background: var(--blue);
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(20px, 2.4vw, 40px) 0;
+  overflow: hidden;
+}
+
+.backLink {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--paper);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 clamp(16px, 1.8vw, 28px);
+  transition: gap .25s ease;
+}
+.backLink:hover { gap: 14px; }
+
+.blueTop {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.vert {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  align-self: center;
+  margin: auto 0;
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  font-size: clamp(11px, .82vw, 14px);
+}
+
+.mark {
+  text-align: center;
+  line-height: 1;
+}
+
+/* ── RIGHT — PAPER PANEL ─────────────────────────────────── */
+.right {
+  flex: 1;
+  background: var(--paper);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.rightInner {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 52px) clamp(24px, 4vw, 48px);
+}
+
+/* ── PAGE HEADER ─────────────────────────────────────────── */
+.pageHeader {
+  margin-bottom: clamp(20px, 3vw, 34px);
+}
+
+.pageTitle {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(28px, 3.4vw, 52px);
+  line-height: .95;
+  letter-spacing: -.015em;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.pageRule {
+  width: 56px;
+  height: 5px;
+  background: var(--ink);
+}
+
+/* ── EMPTY STATE ─────────────────────────────────────────── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(40px, 8vw, 80px) 0;
+  gap: 20px;
+}
+
+.emptyTitle {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(36px, 5vw, 72px);
+  line-height: .9;
+  letter-spacing: -.02em;
+  color: var(--ink);
+}
+
+.emptyText {
+  font-family: var(--mono);
+  font-size: clamp(11px, .85vw, 13px);
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #6c685f;
+}
+
+.emptyLink {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(11px, .82vw, 13px);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--yellow);
+  text-decoration: none;
+  padding: 13px 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: gap .3s ease, background .3s ease;
+}
+.emptyLink:hover { gap: 20px; background: var(--blue); color: var(--paper); }
+
+/* ── ORDERS LIST ─────────────────────────────────────────── */
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--ink);
+}
+
+.orderRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 2px solid var(--ink);
+  text-decoration: none;
+  color: var(--ink);
+  position: relative;
+  transition: background .2s ease;
+}
+.orderRow:last-child { border-bottom: none; }
+.orderRow:hover { background: rgba(20,18,16,.04); }
+
+.orderRowLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.orderId {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 2px 8px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.orderDate {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #6c685f;
+  letter-spacing: .04em;
+  font-weight: 700;
+}
+
+.orderItems {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #9b9690;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.orderRowMid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.statusPaid {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.statusPending {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.orderRowRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.orderTotal {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(13px, 1.1vw, 17px);
+  color: var(--ink);
+}
+
+.orderViewLink {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+/* ── DETAIL — TWO-COLUMN BODY ────────────────────────────── */
+.detailBody {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: clamp(18px, 2.5vw, 30px);
+  align-items: start;
+}
+
+.detailSummary {
+  position: sticky;
+  top: 0;
+}
+
+/* ── DETAIL — STATUS BANNER ──────────────────────────────── */
+.statusBanner {
+  border: 2px solid var(--ink);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: clamp(14px, 2vw, 22px);
+}
+
+.statusBannerLeft {}
+
+.statusBannerTitle {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(14px, 1.4vw, 20px);
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.statusBannerSub {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: #6c685f;
+}
+
+/* ── DETAIL — PRODUCT LIST ───────────────────────────────── */
+.sectionTitle {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: clamp(10px, 1.4vw, 16px);
+}
+
+.productList {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--ink);
+  margin-bottom: clamp(14px, 2vw, 22px);
+}
+
+.productItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 2px solid var(--ink);
+}
+.productItem:last-child { border-bottom: none; }
+
+.productImg {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border: 2px solid var(--ink);
+  overflow: hidden;
+  background: #e9e6dd;
+  position: relative;
+}
+
+.productInfo { flex: 1; min-width: 0; }
+
+.productTitle {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(13px, 1.1vw, 16px);
+  color: var(--ink);
+  line-height: 1.2;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.productVariant {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #6c685f;
+  border: 1px solid #ccc9c2;
+  padding: 1px 6px;
+  display: inline-block;
+}
+
+.productQty {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #9b9690;
+  letter-spacing: .06em;
+}
+
+.productPrice {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.productPriceMain {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(12px, .95vw, 15px);
+  color: var(--ink);
+  display: block;
+}
+
+.productPriceSub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #9b9690;
+  letter-spacing: .04em;
+  margin-top: 2px;
+  display: block;
+}
+
+/* ── DETAIL — ADDRESS BLOCK ──────────────────────────────── */
+.addressBlock {
+  border: 2px solid var(--ink);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.addressTitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.addressName {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.addressLine {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #6c685f;
+  line-height: 1.5;
+}
+
+/* ── DETAIL — TOTALS ─────────────────────────────────────── */
+.totals {
+  border: 2px solid var(--ink);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #ccc9c2;
+}
+.totalRow:last-of-type { border-bottom: none; }
+
+.totalLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #6c685f;
+}
+
+.totalValue {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.totalFinalRow {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 2px solid var(--ink);
+}
+
+.totalFinalLabel {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(15px, 1.5vw, 20px);
+  color: var(--ink);
+}
+
+.totalFinalValue {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(15px, 1.5vw, 20px);
+  color: var(--ink);
+}
+
+/* ── PAID BADGE / PAYPAL WRAPPER ─────────────────────────── */
+.paidBadge {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(11px, .9vw, 14px);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backToOrders {
+  display: block;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 2px;
+  align-self: flex-start;
+  transition: color .2s, border-color .2s;
+}
+.backToOrders:hover { color: var(--blue); border-color: var(--blue); }
+
+/* ── SKELETON ────────────────────────────────────────────── */
+.skeleton {
+  background: #e0ddd6;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .4; }
+}
+
+/* ── RESPONSIVE ≤ 820px ──────────────────────────────────── */
+@media (max-width: 820px) {
+  .container { --line: 12px; --border: 12px; }
+
+  .page {
+    position: relative;
+    min-height: 100dvh;
+    z-index: auto;
+    flex-direction: column;
+  }
+
+  .left {
+    flex: 0 0 auto;
+    min-width: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    min-height: 80px;
+  }
+
+  .backLink { padding: 0; }
+  .vert { writing-mode: horizontal-tb; transform: none; margin: 0; font-size: 11px; }
+  .blueTop { display: none; }
+  .mark { font-size: 22px; }
+
+  .right { overflow-y: visible; }
+  .rightInner { max-width: 100%; }
+
+  .orderRow { flex-wrap: wrap; }
+  .orderRowMid { flex-direction: row; order: -1; }
+
+  .detailBody { grid-template-columns: 1fr; }
+  .detailSummary { position: static; }
+}
+
+/* ── REDUCED MOTION ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .backLink, .emptyLink, .orderRow, .backToOrders { transition: none !important; }
+  .skeleton { animation: none; }
+}

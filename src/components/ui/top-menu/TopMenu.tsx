@@ -29,7 +29,6 @@ export const TopMenu = () => {
 
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const openSideMenu = useUIStore(state => state.openSideMenu);
   const openCart = useUIStore(state => state.openCart);
   const totalItemsInCart = useCartStore(state => state.getTotalItems());
 
@@ -184,13 +183,13 @@ export const TopMenu = () => {
             </button>
 
             {/* Account (desktop) */}
-            <button
+            <Link
+              href="/cuenta"
               aria-label="Mi cuenta"
-              onClick={() => openSideMenu()}
               className="hidden md:flex w-9 h-9 items-center justify-center text-[#444444] hover:text-[#111111] hover:bg-[#F8F9FA] rounded transition-colors"
             >
               <LuUser className="w-[17px] h-[17px]" />
-            </button>
+            </Link>
 
             {/* Hamburger (mobile) */}
             <button
@@ -278,13 +277,14 @@ export const TopMenu = () => {
               </Link>
 
               <div className="border-t border-[#E5E5E5] pt-2 mt-2">
-                <button
-                  onClick={() => { openSideMenu(); closeMobile(); }}
+                <Link
+                  href="/cuenta"
+                  onClick={closeMobile}
                   className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[#111111] hover:bg-[#F8F9FA] rounded"
                 >
                   <LuUser className="w-4 h-4 text-[#444444]" />
                   Mi cuenta
-                </button>
+                </Link>
               </div>
             </div>
           </div>

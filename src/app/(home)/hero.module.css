@@ -201,11 +201,16 @@
   padding: 18px 0;
 }
 
-.blueTop {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 700;
-  text-align: center;
+/* TOP: brand mark (replaces EST.2024) */
+.blueTopBrand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(16px, 1.6vw, 26px);
+  color: var(--paper);
+  letter-spacing: -.05em;
 }
 
 .vert {
@@ -220,11 +225,36 @@
   font-size: clamp(11px,.82vw,14px);
 }
 
-.blueMark {
-  font-family: var(--serif);
-  font-weight: 900;
-  font-size: clamp(22px,2vw,34px);
-  text-align: center;
+/* BOTTOM: cart button (replaces brand mark) */
+.blueCartBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--paper);
+  padding: 0;
+  width: 100%;
+  flex-shrink: 0;
+  transition: color .25s ease;
+}
+.blueCartBtn:hover { color: var(--yellow); }
+
+.blueCartCount {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  width: 15px;
+  height: 15px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
 }
 
@@ -348,67 +378,6 @@
 
 .tagAccent { color: var(--yellow); }
 
-/* ============================================================
-   CART HERO CELL
-   ============================================================ */
-.cartFig {
-  cursor: pointer;
-  transition: transform .35s cubic-bezier(.2,.8,.2,1);
-}
-.cartFig::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  box-shadow: inset 0 0 0 0 var(--yellow);
-  transition: box-shadow .35s cubic-bezier(.2,.8,.2,1);
-  pointer-events: none;
-  z-index: 3;
-}
-.cartFig:hover { transform: translateY(-4px); }
-.cartFig:hover::after { box-shadow: inset 0 0 0 9px var(--yellow); }
-
-.cartCell {
-  position: absolute;
-  inset: 0;
-  background: var(--ink);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(10px, 1.4vw, 20px);
-  padding: 24px;
-}
-
-.cartCellIcon { color: var(--yellow); }
-
-.cartCellCount {
-  font-family: var(--serif);
-  font-weight: 900;
-  font-size: clamp(52px, 7vw, 108px);
-  line-height: 1;
-  letter-spacing: -.04em;
-  color: var(--paper);
-}
-
-.cartCellCountZero { color: #3a3835; }
-
-.cartCellLabel {
-  font-family: var(--mono);
-  font-weight: 700;
-  font-size: clamp(10px, .78vw, 13px);
-  letter-spacing: .20em;
-  text-transform: uppercase;
-  color: #4a4845;
-}
-
-.cartCellLabelActive { color: #6c685f; }
-
-.cartCellRule {
-  width: 40px;
-  height: 3px;
-  background: var(--yellow);
-  opacity: .35;
-}
 
 /* ============================================================
    NAV OVERLAY
@@ -565,21 +534,29 @@
     flex-direction: row;
   }
 
-  .menuCell { flex: 1; height: 84px; }
+  /* Compact menu button */
+  .menuCell { flex: 0 0 58px; width: 58px; height: auto; min-height: 58px; }
 
+  /* Blue block: compact horizontal strip — logo left, cart right */
   .blockBlue {
     flex: 1;
-    padding: 14px;
+    padding: 0 16px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    min-height: 58px;
   }
 
-  .vert {
-    writing-mode: horizontal-tb;
-    transform: none;
-    margin: 0;
+  /* Hide vertical text on mobile */
+  .vert { display: none; }
+
+  /* Smaller brand mark on mobile */
+  .blueTopBrand {
+    font-size: clamp(14px, 5vw, 20px);
   }
+
+  /* Cart button compact */
+  .blueCartBtn { width: auto; padding: 0 4px; }
 
   .blockYellow { flex: none; min-height: 340px; }
   .blockRed    { flex: none; min-height: 300px; }

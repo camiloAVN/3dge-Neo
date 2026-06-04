@@ -23,7 +23,7 @@ export default {
       const path = nextUrl.pathname;
 
       const isOnAdminRoute  = path.startsWith('/admin');
-      const isOnUserRoute   = path.startsWith('/profile') || path.startsWith('/orders') || path.startsWith('/checkout');
+      const isOnUserRoute   = path.startsWith('/profile') || path.startsWith('/orders') || path.startsWith('/checkout') || path.startsWith('/cuenta');
       const isOnAuth        = path.startsWith('/auth');
 
       // Admin routes: need login + admin role

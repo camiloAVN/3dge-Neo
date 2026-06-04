@@ -19,7 +19,7 @@ export const getOrdersByUser = async() =>{
             userId: session.user.id
         },
         include:{
-            OrderAddress:{
+            orderAddress:{
                 select:{
                     firstName: true,
                     lastName: true
