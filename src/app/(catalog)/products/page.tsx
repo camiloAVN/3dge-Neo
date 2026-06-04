@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
+import { Brand3DGE } from '@/components/ui/brand/Brand3DGE';
+import { NeoCart } from '@/components/cart/neo-cart/NeoCart';
 import styles from './selector.module.css';
 
 export default function ProductsPage() {
@@ -25,8 +27,9 @@ export default function ProductsPage() {
 
         {/* ── Top bar ── */}
         <div className={styles.topBar}>
-          <Link href="/" className={styles.backLink}>← 3DGE</Link>
+          <Link href="/" className={styles.backLink}>← <Brand3DGE size={20} /></Link>
           <span className={styles.topLabel}>Colecciones</span>
+          <NeoCart />
         </div>
 
         {/* ── Three category shapes ── */}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { RegisterForm } from "./ui/RegisterForm";
+import { Brand3DGE } from "@/components/ui/brand/Brand3DGE";
 import styles from "../auth.module.css";
 
 export default function RegisterPage() {
@@ -7,7 +8,9 @@ export default function RegisterPage() {
     <>
       <h1 className={styles.heading}>Crear<br />cuenta.</h1>
       <div className={styles.rule} />
-      <p className={styles.subtitle}>3DGE · Nueva cuenta</p>
+      <p className={styles.subtitle} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <Brand3DGE size={16} /> · Nueva cuenta
+      </p>
 
       <RegisterForm />
 

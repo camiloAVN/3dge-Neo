@@ -180,11 +180,15 @@
     37% 33%, 7%  33%
   );
   justify-content: space-between;
+  align-items: center;
   padding: clamp(18px, 2vw, 32px) clamp(22px, 2.5vw, 40px);
 }
+/* "CREA" vertical en el mango, de abajo hacia arriba */
 .crea .shapeLabel {
-  font-size: clamp(22px, 2.8vw, 46px);
-  margin-top: auto;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: clamp(16px, 1.7vw, 28px);
+  letter-spacing: .12em;
 }
 .crea .shapeArrow { align-self: center; }
 

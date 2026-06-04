@@ -2,10 +2,19 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { LuShoppingCart } from 'react-icons/lu';
+import { useCartStore } from '@/store';
+import { Brand3DGE } from '@/components/ui/brand/Brand3DGE';
+import { NeoCartModal } from '@/components/cart/neo-cart/NeoCartModal';
 import styles from './hero.module.css';
 
 export default function HeroPage() {
-  const [navOpen, setNavOpen] = useState(false);
+  const [navOpen,  setNavOpen]  = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const router     = useRouter();
+  const cart       = useCartStore(s => s.cart);
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
     const syncOverflow = () => {
@@ -15,7 +24,9 @@ export default function HeroPage() {
     syncOverflow();
     window.addEventListener('resize', syncOverflow);
 
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setNavOpen(false); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setNavOpen(false); setCartOpen(false); }
+    };
     document.addEventListener('keydown', onKey);
 
     return () => {
@@ -28,6 +39,12 @@ export default function HeroPage() {
 
   const open  = () => setNavOpen(true);
   const close = () => setNavOpen(false);
+
+  /* Cart cell click: redirect if empty, open modal if has items */
+  const handleCartClick = () => {
+    if (totalItems === 0) router.push('/products');
+    else setCartOpen(true);
+  };
 
   return (
     <div className={styles.container}>
@@ -52,7 +69,7 @@ export default function HeroPage() {
               <div className={styles.blueTop}>EST.&nbsp;2024</div>
               <div className={styles.vert}>Orden en la pared</div>
               <div className={styles.blueMark}>
-                3<span style={{ fontStyle: 'italic' }}>D</span>GE
+                <Brand3DGE size={36} priority />
               </div>
             </div>
           </div>
@@ -61,7 +78,8 @@ export default function HeroPage() {
           <div className={`${styles.block} ${styles.blockYellow} ${styles.hoverable}`}>
             <div className={styles.brandline}>
               <span className={styles.brandlineDot} />
-              3DGE · ORGANIZADORES DE PARED
+              <Brand3DGE size={14} priority />
+              · ORGANIZADORES DE PARED
             </div>
             <h1 className={styles.headTitle}>
               Creatividad que desborda la realidad.
@@ -76,13 +94,28 @@ export default function HeroPage() {
             </button>
           </div>
 
-          {/* Main product photo */}
-          <figure className={`${styles.cell} ${styles.photo} ${styles.photoBig} ${styles.hoverable}`}>
-            <div className={styles.ph}>
-              <div className={styles.frame} />
-              <div className={styles.cap}>
-                Foto — organizador montado en pared (toma principal)
-              </div>
+          {/* ── CART CELL ── */}
+          <figure
+            className={`${styles.cell} ${styles.photo} ${styles.photoBig} ${styles.cartFig}`}
+            onClick={handleCartClick}
+            aria-label={totalItems === 0 ? 'Ver colecciones' : `Ver carrito — ${totalItems} productos`}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleCartClick(); }}
+          >
+            <div className={styles.cartCell}>
+              <LuShoppingCart
+                className={styles.cartCellIcon}
+                size={clamp(36, 48, 64)}
+                style={{ width: 'clamp(36px,4.5vw,64px)', height: 'clamp(36px,4.5vw,64px)' }}
+              />
+              <div className={styles.cartCellRule} />
+              <span className={`${styles.cartCellCount} ${totalItems === 0 ? styles.cartCellCountZero : ''}`}>
+                {totalItems}
+              </span>
+              <span className={`${styles.cartCellLabel} ${totalItems > 0 ? styles.cartCellLabelActive : ''}`}>
+                {totalItems === 0 ? 'Ver colecciones' : totalItems === 1 ? 'producto' : 'productos'}
+              </span>
             </div>
           </figure>
         </div>
@@ -133,7 +166,7 @@ export default function HeroPage() {
       >
         <div className={styles.ovBar}>
           <span className={styles.ovBrand}>
-            3<span style={{ fontStyle: 'italic' }}>D</span>GE
+            <Brand3DGE size={32} priority />
           </span>
           <button className={styles.ovClose} onClick={close} aria-label="Cerrar menú">
             <span className={styles.ovCloseSpan} />
@@ -142,20 +175,12 @@ export default function HeroPage() {
         </div>
 
         <div className={styles.ovRow}>
-          <Link
-            href="/"
-            className={`${styles.ovItem} ${styles.ovItemA} ${navOpen ? styles.ovItemVisible : ''}`}
-            onClick={close}
-          >
+          <Link href="/" className={`${styles.ovItem} ${styles.ovItemA} ${navOpen ? styles.ovItemVisible : ''}`} onClick={close}>
             <span className={styles.ovNum}>01</span>
             <span className={styles.ovLabel}>Inicio</span>
             <span className={styles.ovArrow}>→</span>
           </Link>
-          <Link
-            href="/products"
-            className={`${styles.ovItem} ${styles.ovItemB} ${navOpen ? styles.ovItemVisible : ''}`}
-            onClick={close}
-          >
+          <Link href="/products" className={`${styles.ovItem} ${styles.ovItemB} ${navOpen ? styles.ovItemVisible : ''}`} onClick={close}>
             <span className={styles.ovNum}>02</span>
             <span className={styles.ovLabel}>Crea tu organizador</span>
             <span className={styles.ovArrow}>→</span>
@@ -163,20 +188,12 @@ export default function HeroPage() {
         </div>
 
         <div className={styles.ovRow}>
-          <Link
-            href="/products"
-            className={`${styles.ovItem} ${styles.ovItemC} ${navOpen ? styles.ovItemVisible : ''}`}
-            onClick={close}
-          >
+          <Link href="/products" className={`${styles.ovItem} ${styles.ovItemC} ${navOpen ? styles.ovItemVisible : ''}`} onClick={close}>
             <span className={styles.ovNum}>03</span>
             <span className={styles.ovLabel}>Productos</span>
             <span className={styles.ovArrow}>→</span>
           </Link>
-          <Link
-            href="/auth/login"
-            className={`${styles.ovItem} ${styles.ovItemD} ${navOpen ? styles.ovItemVisible : ''}`}
-            onClick={close}
-          >
+          <Link href="/auth/login" className={`${styles.ovItem} ${styles.ovItemD} ${navOpen ? styles.ovItemVisible : ''}`} onClick={close}>
             <span className={styles.ovNum}>04</span>
             <span className={styles.ovLabel}>Iniciar sesión</span>
             <span className={styles.ovArrow}>→</span>
@@ -184,6 +201,14 @@ export default function HeroPage() {
         </div>
       </nav>
 
+      {/* ====== CART MODAL ====== */}
+      <NeoCartModal open={cartOpen} onClose={() => setCartOpen(false)} />
+
     </div>
   );
+}
+
+/* tiny helper — avoids importing a library just for clamping in JSX */
+function clamp(min: number, val: number, max: number) {
+  return Math.min(Math.max(val, min), max);
 }

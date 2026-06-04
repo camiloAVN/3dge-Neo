@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Brand3DGE } from "@/components/ui/brand/Brand3DGE";
 import styles from "./auth.module.css";
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -16,7 +17,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
           <div className={styles.blueTop}>EST.&nbsp;2024</div>
           <div className={styles.vert}>Orden en la pared</div>
           <div className={styles.mark}>
-            3<span style={{ fontStyle: "italic" }}>D</span>GE
+            <Brand3DGE size={40} priority />
           </div>
         </div>
 
@@ -24,7 +25,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         <div className={styles.right}>
           <div className={styles.rightInner}>
             <Link href="/" className={styles.backLink}>
-              ← 3DGE
+              ← <Brand3DGE size={20} />
             </Link>
             {children}
           </div>

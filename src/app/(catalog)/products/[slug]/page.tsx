@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPaginationProductWithImages } from '@/actions';
 import { NeoProductCard } from './ui/NeoProductCard';
+import { NeoCart } from '@/components/cart/neo-cart/NeoCart';
 import styles from './grid.module.css';
 
 /* ── Fixed category definitions ── */
@@ -90,7 +91,10 @@ function TopBar({ cat, slug }: { cat: (typeof CATEGORIES)[Slug]; slug: string })
     <div className={styles.topBar}>
       <Link href="/products" className={styles.backLink}>← Colecciones</Link>
       <span className={styles.topTitle}>{cat.label}</span>
-      <div className={`${styles.topAccent} ${styles[`accent${cat.accent}`]}`} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+        <div className={`${styles.topAccent} ${styles[`accent${cat.accent}`]}`} />
+        <NeoCart />
+      </div>
     </div>
   );
 }
