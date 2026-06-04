@@ -22,7 +22,7 @@ export * from './order/get-paginated-orders'
 export * from './order/update-order-delivery'
 
 export * from './payments/set-transaction-id'
-export * from './payments/paypal-payment'
+export * from './payments/mercadopago-payment'
 
 export * from './user/get-paginated-users'
 export * from './user/change-user-role'

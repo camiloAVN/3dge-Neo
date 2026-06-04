@@ -2,22 +2,38 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { Brand3DGE } from '@/components/ui/brand/Brand3DGE';
-import { PayPalButton } from '@/components';
-import { getOrderById } from '@/actions';
+import { MercadoPagoButton } from '@/components/mercadopago/MercadoPagoButton';
+import { getOrderById, createMercadoPagoPreference, verifyMercadoPagoPayment } from '@/actions';
 import { currencyFormat } from '@/utils';
 import styles from '../orders.module.css';
 
 interface Props {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ payment_id?: string; status?: string }>;
 }
 
 export const metadata = { title: 'Detalle del pedido' };
 
-export default async function OrderPage({ params }: Props) {
+export default async function OrderPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const { payment_id, status } = await searchParams;
+
   const { ok, order } = await getOrderById(id);
 
   if (!ok || !order) redirect('/orders');
+
+  // Auto-verify when MP redirects back with payment_id
+  if (payment_id && status === 'approved' && !order.isPaid) {
+    await verifyMercadoPagoPayment(payment_id, id);
+    redirect(`/orders/${id}`);
+  }
+
+  // Create MP preference for unpaid orders
+  let preferenceId: string | null = null;
+  if (!order.isPaid) {
+    const result = await createMercadoPagoPreference(id, order.total);
+    if (result.ok) preferenceId = result.preferenceId;
+  }
 
   const address = order.orderAddress!;
   const shortId = id.split('-').at(-1)?.toUpperCase() ?? id;
@@ -184,9 +200,9 @@ export default async function OrderPage({ params }: Props) {
                     <span>Pago confirmado</span>
                     <span>✓</span>
                   </div>
-                ) : (
-                  <PayPalButton amount={order.total} orderId={order.id} />
-                )}
+                ) : preferenceId ? (
+                  <MercadoPagoButton preferenceId={preferenceId} />
+                ) : null}
 
                 <Link href="/orders" className={styles.backToOrders}>
                   ← Volver a mis pedidos

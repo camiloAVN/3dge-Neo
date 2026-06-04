@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1056.0",
+    "@mercadopago/sdk-react": "^1.0.7",
     "@paypal/react-paypal-js": "^8.9.2",
     "@prisma/client": "^6.16.1",
     "@react-email/components": "^1.0.12",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
+    "mercadopago": "^3.1.0",
     "next": "15.5.2",
     "next-auth": "^5.0.0-beta.29",
     "react": "19.1.0",
