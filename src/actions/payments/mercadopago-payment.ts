@@ -29,6 +29,7 @@ export const createMercadoPagoPreference = async (orderId: string, total: number
           pending: `${appUrl}/orders/${orderId}`,
         },
         auto_return: 'approved',
+        notification_url: `${appUrl}/api/payments/mercadopago`,
       },
     });
 
