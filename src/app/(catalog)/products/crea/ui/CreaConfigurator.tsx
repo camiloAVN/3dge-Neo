@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { NeoCart } from '@/components/cart/neo-cart/NeoCart';
 import { currencyFormat } from '@/utils';
@@ -22,8 +22,10 @@ interface Block {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const CELL = 60; // px per cell
-const GAP  = 6;  // px gap between cells
+const GAP        = 6;
+const MIN_CELL   = 38;
+const MAX_CELL   = 120;
+const CANVAS_PAD = 48;
 
 const COLOR_HEX: Record<Color, string> = {
   ink:    '#141210',
@@ -33,7 +35,6 @@ const COLOR_HEX: Record<Color, string> = {
   blue:   '#1f3fd6',
 };
 
-// Text color for legible labels on each bg color
 const COLOR_TEXT: Record<Color, string> = {
   ink:    '#f6f4ee',
   paper:  '#141210',
@@ -41,15 +42,6 @@ const COLOR_TEXT: Record<Color, string> = {
   yellow: '#141210',
   blue:   '#f6f4ee',
 };
-
-const SHAPES = [
-  { id: '1x1', label: '1×1', w: 1, h: 1 },
-  { id: '2x1', label: '2×1', w: 2, h: 1 },
-  { id: '1x2', label: '1×2', w: 1, h: 2 },
-  { id: '2x2', label: '2×2', w: 2, h: 2 },
-  { id: '3x1', label: '3×1', w: 3, h: 1 },
-  { id: '1x3', label: '1×3', w: 1, h: 3 },
-] as const;
 
 const FUNCTIONS = [
   { id: 'key-hook', label: 'Colgador de llaves', price: 0 },
@@ -66,17 +58,13 @@ function uid() { return Math.random().toString(36).slice(2, 9); }
 
 function canPlace(
   x: number, y: number, w: number, h: number,
-  gridW: number, gridH: number,
-  blocks: Block[],
+  gridW: number, gridH: number, blocks: Block[],
 ) {
   if (x < 0 || y < 0 || x + w > gridW || y + h > gridH) return false;
-  for (let cx = x; cx < x + w; cx++) {
-    for (let cy = y; cy < y + h; cy++) {
-      if (blocks.some(b => cx >= b.x && cx < b.x + b.w && cy >= b.y && cy < b.y + b.h)) {
+  for (let cx = x; cx < x + w; cx++)
+    for (let cy = y; cy < y + h; cy++)
+      if (blocks.some(b => cx >= b.x && cx < b.x + b.w && cy >= b.y && cy < b.y + b.h))
         return false;
-      }
-    }
-  }
   return true;
 }
 
@@ -87,60 +75,98 @@ function blockAt(x: number, y: number, blocks: Block[]) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function CreaConfigurator() {
-  const [gridW, setGridW]           = useState(5);
-  const [gridH, setGridH]           = useState(5);
-  const [blocks, setBlocks]         = useState<Block[]>([]);
-  const [history, setHistory]       = useState<Block[][]>([[]]);
-  const [histIdx, setHistIdx]       = useState(0);
+  // Grid size
+  const [gridW, setGridW] = useState(5);
+  const [gridH, setGridH] = useState(5);
 
-  const [selShapeId, setSelShapeId] = useState<string>('1x1');
-  const [selColor, setSelColor]     = useState<Color>('blue');
+  // Shape size (free W×H, max limited to grid size)
+  const [shapeW, setShapeW] = useState(1);
+  const [shapeH, setShapeH] = useState(1);
+
+  // Blocks & history
+  const [blocks,  setBlocks]  = useState<Block[]>([]);
+  const [history, setHistory] = useState<Block[][]>([[]]);
+  const [histIdx, setHistIdx] = useState(0);
+
+  // UI state
+  const [selColor,   setSelColor]   = useState<Color>('blue');
   const [selBlockId, setSelBlockId] = useState<string | null>(null);
-  const [hoverCell, setHoverCell]   = useState<{ x: number; y: number } | null>(null);
+  const [hoverCell,  setHoverCell]  = useState<{ x: number; y: number } | null>(null);
   const [draggingFn, setDraggingFn] = useState<string | null>(null);
 
-  const selShape = SHAPES.find(s => s.id === selShapeId) ?? SHAPES[0];
-  const selBlock = blocks.find(b => b.id === selBlockId) ?? null;
-  const totalPrice = blocks.reduce((sum, b) => {
-    return sum + (FUNCTIONS.find(f => f.id === b.functionId)?.price ?? 0);
-  }, 0);
+  // Adaptive cell size
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [cellSize, setCellSize] = useState(64);
 
-  // ── History helpers ─────────────────────────────────────────────
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const compute = () => {
+      const availW = canvas.clientWidth  - CANVAS_PAD * 2;
+      const availH = canvas.clientHeight - CANVAS_PAD * 2;
+      const byW = Math.floor((availW - (gridW - 1) * GAP) / gridW);
+      const byH = Math.floor((availH - (gridH - 1) * GAP) / gridH);
+      setCellSize(Math.max(MIN_CELL, Math.min(MAX_CELL, byW, byH)));
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, [gridW, gridH]);
+
+  // Clamp shape size if grid shrinks below it
+  useEffect(() => {
+    if (shapeW > gridW) setShapeW(gridW);
+    if (shapeH > gridH) setShapeH(gridH);
+  }, [gridW, gridH, shapeW, shapeH]);
+
+  const selBlock   = blocks.find(b => b.id === selBlockId) ?? null;
+  const totalPrice = blocks.reduce((sum, b) =>
+    sum + (FUNCTIONS.find(f => f.id === b.functionId)?.price ?? 0), 0);
+
+  // ── History ──────────────────────────────────────────────────────
   const commit = useCallback((next: Block[]) => {
     setHistory(prev => [...prev.slice(0, histIdx + 1), next]);
     setHistIdx(i => i + 1);
     setBlocks(next);
   }, [histIdx]);
 
-  const undo = () => {
+  const undo  = () => {
     if (histIdx === 0) return;
-    const prev = histIdx - 1;
-    setHistIdx(prev);
-    setBlocks(history[prev]);
-    setSelBlockId(null);
+    const i = histIdx - 1;
+    setHistIdx(i); setBlocks(history[i]); setSelBlockId(null);
   };
-
   const clear = () => { commit([]); setSelBlockId(null); };
 
-  // ── Grid size ───────────────────────────────────────────────────
+  // ── Grid size ─────────────────────────────────────────────────────
   const changeGrid = (axis: 'w' | 'h', delta: number) => {
-    const newVal = Math.min(10, Math.max(2, (axis === 'w' ? gridW : gridH) + delta));
-    const filtered = blocks.filter(b =>
-      axis === 'w' ? b.x + b.w <= newVal : b.y + b.h <= newVal
+    const cur  = axis === 'w' ? gridW : gridH;
+    const next = Math.min(10, Math.max(2, cur + delta));
+    const trimmed = blocks.filter(b =>
+      axis === 'w' ? b.x + b.w <= next : b.y + b.h <= next
     );
-    if (axis === 'w') setGridW(newVal); else setGridH(newVal);
-    if (filtered.length !== blocks.length) commit(filtered);
+    if (axis === 'w') setGridW(next); else setGridH(next);
+    if (trimmed.length !== blocks.length) commit(trimmed);
   };
 
-  // ── Cell interactions ───────────────────────────────────────────
+  // ── Shape size ────────────────────────────────────────────────────
+  const changeShape = (axis: 'w' | 'h', delta: number) => {
+    const max = axis === 'w' ? gridW : gridH;
+    if (axis === 'w') setShapeW(v => Math.min(max, Math.max(1, v + delta)));
+    else              setShapeH(v => Math.min(max, Math.max(1, v + delta)));
+  };
+
+  // ── Cell interactions ──────────────────────────────────────────────
   const handleCellClick = (x: number, y: number) => {
     const hit = blockAt(x, y, blocks);
     if (hit) {
-      setSelBlockId(prev => prev === hit.id ? null : hit.id);
+      // Clicking an occupied cell selects/deselects the block
+      setSelBlockId(p => p === hit.id ? null : hit.id);
       return;
     }
-    if (!canPlace(x, y, selShape.w, selShape.h, gridW, gridH, blocks)) return;
-    commit([...blocks, { id: uid(), x, y, w: selShape.w, h: selShape.h, color: selColor }]);
+    // Prevent placing on or overlapping existing blocks
+    if (!canPlace(x, y, shapeW, shapeH, gridW, gridH, blocks)) return;
+    commit([...blocks, { id: uid(), x, y, w: shapeW, h: shapeH, color: selColor }]);
     setSelBlockId(null);
   };
 
@@ -150,14 +176,11 @@ export function CreaConfigurator() {
     setSelBlockId(null);
   };
 
-  // ── Function assignment ─────────────────────────────────────────
-  const assignFn = (blockId: string, fnId: string) => {
+  // ── Function assignment ────────────────────────────────────────────
+  const assignFn = (blockId: string, fnId: string) =>
     commit(blocks.map(b =>
-      b.id === blockId
-        ? { ...b, functionId: b.functionId === fnId ? undefined : fnId }
-        : b
+      b.id === blockId ? { ...b, functionId: b.functionId === fnId ? undefined : fnId } : b
     ));
-  };
 
   const handleDrop = (x: number, y: number) => {
     if (!draggingFn) return;
@@ -166,19 +189,20 @@ export function CreaConfigurator() {
     setDraggingFn(null);
   };
 
-  // ── Computed canvas dimensions ──────────────────────────────────
-  const canvasW = gridW * CELL + (gridW - 1) * GAP;
-  const canvasH = gridH * CELL + (gridH - 1) * GAP;
+  // ── Computed dimensions ────────────────────────────────────────────
+  const step    = cellSize + GAP;
+  const canvasW = gridW * cellSize + (gridW - 1) * GAP;
+  const canvasH = gridH * cellSize + (gridH - 1) * GAP;
   const hoverValid = hoverCell
-    ? canPlace(hoverCell.x, hoverCell.y, selShape.w, selShape.h, gridW, gridH, blocks)
+    ? canPlace(hoverCell.x, hoverCell.y, shapeW, shapeH, gridW, gridH, blocks)
     : false;
 
-  // ── Render ──────────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────
   return (
     <div className={styles.container}>
       <div className={styles.page}>
 
-        {/* ── Top bar ── */}
+        {/* Top bar */}
         <div className={styles.topBar}>
           <Link href="/products" className={styles.backLink}>← Colecciones</Link>
           <span className={styles.topTitle}>CREA — CONFIGURADOR</span>
@@ -188,29 +212,39 @@ export function CreaConfigurator() {
           </div>
         </div>
 
-        {/* ── Main ── */}
         <div className={styles.main}>
 
-          {/* LEFT PANEL */}
+          {/* ── LEFT PANEL ── */}
           <div className={styles.panel}>
 
-            {/* Formas */}
+            {/* Shape size */}
             <div className={styles.section}>
-              <span className={styles.sLabel}>FORMAS</span>
-              <div className={styles.shapeGrid}>
-                {SHAPES.map(s => (
-                  <button
-                    key={s.id}
-                    className={`${styles.shapeBtn} ${selShapeId === s.id ? styles.shapeBtnOn : ''}`}
-                    onClick={() => { setSelShapeId(s.id); setSelBlockId(null); }}
-                  >
-                    {s.label}
-                  </button>
-                ))}
+              <span className={styles.sLabel}>FORMA — {shapeW}×{shapeH}</span>
+              {(['w', 'h'] as const).map(axis => (
+                <div key={axis} className={styles.sizeRow}>
+                  <span className={styles.sizeLabel}>{axis.toUpperCase()}</span>
+                  <button className={styles.sizeBtn} onClick={() => changeShape(axis, -1)}>−</button>
+                  <span className={styles.sizeVal}>{axis === 'w' ? shapeW : shapeH}</span>
+                  <button className={styles.sizeBtn} onClick={() => changeShape(axis, +1)}>+</button>
+                  <span className={styles.sizeCap}>/ {axis === 'w' ? gridW : gridH}</span>
+                </div>
+              ))}
+              {/* Visual preview of selected shape */}
+              <div className={styles.shapePreviewWrap}>
+                <div
+                  className={styles.shapePreviewBlock}
+                  style={{
+                    aspectRatio: `${shapeW} / ${shapeH}`,
+                    background: COLOR_HEX[selColor],
+                    maxWidth: `${shapeW * 20}px`,
+                    maxHeight: `${shapeH * 20}px`,
+                    width: '100%',
+                  }}
+                />
               </div>
             </div>
 
-            {/* Colores */}
+            {/* Color */}
             <div className={styles.section}>
               <span className={styles.sLabel}>COLOR</span>
               <div className={styles.colorRow}>
@@ -226,27 +260,27 @@ export function CreaConfigurator() {
               </div>
             </div>
 
-            {/* Tamaño del grid */}
+            {/* Grid size */}
             <div className={styles.section}>
-              <span className={styles.sLabel}>TAMAÑO</span>
+              <span className={styles.sLabel}>CUADRÍCULA — {gridW}×{gridH}</span>
               {(['w', 'h'] as const).map(axis => (
                 <div key={axis} className={styles.sizeRow}>
                   <span className={styles.sizeLabel}>{axis.toUpperCase()}</span>
                   <button className={styles.sizeBtn} onClick={() => changeGrid(axis, -1)}>−</button>
                   <span className={styles.sizeVal}>{axis === 'w' ? gridW : gridH}</span>
                   <button className={styles.sizeBtn} onClick={() => changeGrid(axis, +1)}>+</button>
-                  <span className={styles.sizeCap}>max 10</span>
+                  <span className={styles.sizeCap}>/ 10</span>
                 </div>
               ))}
             </div>
 
-            {/* Funciones */}
+            {/* Function modules */}
             <div className={styles.section}>
               <span className={styles.sLabel}>
                 MÓDULOS
                 {selBlock
-                  ? <span className={styles.sLabelHint}> — arrastra o click</span>
-                  : <span className={styles.sLabelHint}> — selecciona un bloque</span>}
+                  ? <span className={styles.sLabelHint}> — click o arrastra</span>
+                  : <span className={styles.sLabelHint}> — selecciona bloque primero</span>}
               </span>
               <div className={styles.fnList}>
                 {FUNCTIONS.map(fn => (
@@ -265,7 +299,7 @@ export function CreaConfigurator() {
               </div>
             </div>
 
-            {/* Acciones + precio */}
+            {/* Actions + price */}
             <div className={styles.bottom}>
               <div className={styles.actionRow}>
                 <button className={styles.actBtn} onClick={undo} disabled={histIdx === 0}>Deshacer</button>
@@ -285,21 +319,20 @@ export function CreaConfigurator() {
             </div>
           </div>
 
-          {/* CANVAS */}
-          <div className={styles.canvas}>
+          {/* ── CANVAS ── */}
+          <div className={styles.canvas} ref={canvasRef}>
             <div
               className={styles.gridWrapper}
               style={{ width: canvasW, height: canvasH }}
               onMouseLeave={() => setHoverCell(null)}
             >
-
-              {/* Invisible interaction cells */}
+              {/* Cells */}
               {Array.from({ length: gridH }, (_, y) =>
                 Array.from({ length: gridW }, (_, x) => (
                   <div
                     key={`c-${x}-${y}`}
                     className={styles.cell}
-                    style={{ left: x * (CELL + GAP), top: y * (CELL + GAP) }}
+                    style={{ left: x * step, top: y * step, width: cellSize, height: cellSize }}
                     onMouseEnter={() => setHoverCell({ x, y })}
                     onClick={() => handleCellClick(x, y)}
                     onDragOver={e => e.preventDefault()}
@@ -308,23 +341,23 @@ export function CreaConfigurator() {
                 ))
               )}
 
-              {/* Placed blocks */}
+              {/* Blocks */}
               {blocks.map(b => {
-                const fn = FUNCTIONS.find(f => f.id === b.functionId);
-                const isSelected = selBlockId === b.id;
+                const fn  = FUNCTIONS.find(f => f.id === b.functionId);
+                const sel = selBlockId === b.id;
                 return (
                   <div
                     key={b.id}
-                    className={`${styles.block} ${isSelected ? styles.blockOn : ''}`}
+                    className={`${styles.block} ${sel ? styles.blockOn : ''}`}
                     style={{
-                      left:   b.x * (CELL + GAP),
-                      top:    b.y * (CELL + GAP),
-                      width:  b.w * CELL + (b.w - 1) * GAP,
-                      height: b.h * CELL + (b.h - 1) * GAP,
+                      left:       b.x * step,
+                      top:        b.y * step,
+                      width:      b.w * cellSize + (b.w - 1) * GAP,
+                      height:     b.h * cellSize + (b.h - 1) * GAP,
                       background: COLOR_HEX[b.color],
-                      color: COLOR_TEXT[b.color],
+                      color:      COLOR_TEXT[b.color],
                     }}
-                    onClick={() => setSelBlockId(prev => prev === b.id ? null : b.id)}
+                    onClick={() => setSelBlockId(p => p === b.id ? null : b.id)}
                     onDragOver={e => e.preventDefault()}
                     onDrop={e => { e.stopPropagation(); handleDrop(b.x, b.y); }}
                   >
@@ -338,10 +371,10 @@ export function CreaConfigurator() {
                 <div
                   className={styles.preview}
                   style={{
-                    left:    hoverCell.x * (CELL + GAP),
-                    top:     hoverCell.y * (CELL + GAP),
-                    width:   selShape.w * CELL + (selShape.w - 1) * GAP,
-                    height:  selShape.h * CELL + (selShape.h - 1) * GAP,
+                    left:       hoverCell.x * step,
+                    top:        hoverCell.y * step,
+                    width:      shapeW * cellSize + (shapeW - 1) * GAP,
+                    height:     shapeH * cellSize + (shapeH - 1) * GAP,
                     background: hoverValid ? COLOR_HEX[selColor] : COLOR_HEX.red,
                   }}
                 />
