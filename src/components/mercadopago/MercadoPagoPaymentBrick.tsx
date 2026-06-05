@@ -25,6 +25,7 @@ export const MercadoPagoPaymentBrick = ({ orderId, amount, preferenceId }: Props
   const customization = {
     paymentMethods: {
       creditCard: 'all',
+      debitCard: 'all',
       mercadoPago: 'all',
       onboarding_credits: 'none',
     },
