@@ -19,7 +19,7 @@ export const getPaginatedOrders = async() =>{
             createdAt: 'desc'
         },
         include:{
-            OrderAddress:{
+            orderAddress:{
                 select:{
                     firstName: true,
                     lastName: true

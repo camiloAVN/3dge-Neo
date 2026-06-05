@@ -21,7 +21,6 @@ export * from './order/get-order-by-user'
 export * from './order/get-paginated-orders'
 export * from './order/update-order-delivery'
 
-export * from './payments/set-transaction-id'
 export * from './payments/mercadopago-payment'
 
 export * from './user/get-paginated-users'

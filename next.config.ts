@@ -28,13 +28,13 @@ const securityHeaders = [
     value: [
       "default-src 'self'",
       // Next.js requiere unsafe-inline/unsafe-eval para hydration
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.paypal.com https://www.sandbox.paypal.com",
-      "style-src 'self' 'unsafe-inline'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sdk.mercadopago.com https://*.mlstatic.com",
+      "style-src 'self' 'unsafe-inline' https://*.mlstatic.com",
       // Imágenes propias + R2/Cloudflare + data URIs para optimización Next.js
       "img-src 'self' data: blob: https:",
-      "font-src 'self' data:",
-      "connect-src 'self' https://www.paypal.com https://www.sandbox.paypal.com",
-      "frame-src https://www.paypal.com https://www.sandbox.paypal.com",
+      "font-src 'self' data: https://*.mlstatic.com",
+      "connect-src 'self' https://api.mercadopago.com https://*.mlstatic.com https://*.mercadopago.com https://*.mercadolibre.com",
+      "frame-src https://*.mercadopago.com https://*.mercadolibre.com https://*.mlstatic.com",
       // Bloquea objetos embebidos (Flash, plugins)
       "object-src 'none'",
       // Previene inyección de base URL

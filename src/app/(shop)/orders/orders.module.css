@@ -510,6 +510,27 @@
   justify-content: space-between;
 }
 
+.paymentError {
+  border: 2px solid var(--red);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--red);
+}
+
+.retryLink {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: .06em;
+}
+.retryLink:hover { color: var(--blue); }
+
 .backToOrders {
   display: block;
   margin-top: 14px;

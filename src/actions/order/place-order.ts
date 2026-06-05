@@ -90,7 +90,7 @@ export const placeOrder = async(productIds: ProductToOrder[], address: Address)=
                     tax: tax,
                     total: total,
 
-                    OrderItem:{
+                    orderItems:{
                         createMany:{
                             data: productIds.map(p =>({
                                 quantity: p.quantity,
@@ -129,11 +129,18 @@ export const placeOrder = async(productIds: ProductToOrder[], address: Address)=
 
         
     } catch (error: any) {
+        console.error('[placeOrder]', error);
+
+        // Only expose messages from intentional business logic throws (stock, etc.)
+        const safeMessages = ['no tiene inventario suficiente', 'no existe - 500', 'no tiene cantidad definida'];
+        const isSafe = safeMessages.some(m => error?.message?.includes(m));
+
         return{
-            oK:false,
-            message: error?.message,
+            ok: false,
+            message: isSafe
+                ? error.message
+                : 'No se pudo procesar el pedido. Por favor intenta de nuevo.',
         }
-        
     }
 
 }

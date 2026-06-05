@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { Brand3DGE } from '@/components/ui/brand/Brand3DGE';
-import { MercadoPagoButton } from '@/components/mercadopago/MercadoPagoButton';
+import { MercadoPagoPaymentBrick } from '@/components/mercadopago/MercadoPagoPaymentBrick';
 import { getOrderById, createMercadoPagoPreference, verifyMercadoPagoPayment } from '@/actions';
 import { currencyFormat } from '@/utils';
 import styles from '../orders.module.css';
@@ -30,9 +30,14 @@ export default async function OrderPage({ params, searchParams }: Props) {
 
   // Create MP preference for unpaid orders
   let preferenceId: string | null = null;
+  let paymentError: string | null = null;
   if (!order.isPaid) {
     const result = await createMercadoPagoPreference(id, order.total);
-    if (result.ok) preferenceId = result.preferenceId;
+    if (result.ok) {
+      preferenceId = result.preferenceId;
+    } else {
+      paymentError = result.message ?? 'No se pudo iniciar el pago.';
+    }
   }
 
   const address = order.orderAddress!;
@@ -201,7 +206,16 @@ export default async function OrderPage({ params, searchParams }: Props) {
                     <span>✓</span>
                   </div>
                 ) : preferenceId ? (
-                  <MercadoPagoButton preferenceId={preferenceId} />
+                  <MercadoPagoPaymentBrick
+                    orderId={id}
+                    amount={order.total}
+                    preferenceId={preferenceId}
+                  />
+                ) : paymentError ? (
+                  <div className={styles.paymentError}>
+                    <span>No se pudo cargar el pago</span>
+                    <Link href={`/orders/${id}`} className={styles.retryLink}>Reintentar →</Link>
+                  </div>
                 ) : null}
 
                 <Link href="/orders" className={styles.backToOrders}>
