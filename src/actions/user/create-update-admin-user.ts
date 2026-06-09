@@ -19,7 +19,7 @@ export type AdminUserFormData = z.infer<typeof schema>;
 export async function createUpdateAdminUser(raw: AdminUserFormData) {
   const parsed = schema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, message: parsed.error.errors[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, message: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
   }
 
   const { id, password, ...data } = parsed.data;

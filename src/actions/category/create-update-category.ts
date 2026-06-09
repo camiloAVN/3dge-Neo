@@ -20,7 +20,7 @@ export type CategoryFormData = z.infer<typeof schema>;
 export async function createUpdateCategory(raw: CategoryFormData) {
   const parsed = schema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, message: parsed.error.errors[0]?.message ?? 'Datos inválidos' };
+    return { ok: false, message: parsed.error.issues[0]?.message ?? 'Datos inválidos' };
   }
 
   const { id, ...data } = parsed.data;
