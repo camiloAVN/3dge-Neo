@@ -7,6 +7,10 @@ export const r2 = new S3Client({
     accessKeyId: process.env.R2_ACCESS_KEY_ID ?? '',
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? '',
   },
+  // Prevents SDK v3 from auto-adding CRC32 checksum headers that R2
+  // doesn't support in presigned PUT requests from the browser.
+  requestChecksumCalculation: 'when_required',
+  responseChecksumValidation: 'when_required',
 });
 
 export const R2_BUCKET     = process.env.R2_BUCKET_NAME ?? '';

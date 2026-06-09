@@ -33,7 +33,7 @@ const securityHeaders = [
       // Imágenes propias + R2/Cloudflare + data URIs para optimización Next.js
       "img-src 'self' data: blob: https:",
       "font-src 'self' data: https://*.mlstatic.com",
-      "connect-src 'self' https://api.mercadopago.com https://*.mlstatic.com https://*.mercadopago.com https://*.mercadolibre.com",
+      "connect-src 'self' https://api.mercadopago.com https://*.mlstatic.com https://*.mercadopago.com https://*.mercadolibre.com https://*.r2.cloudflarestorage.com https://*.r2.dev",
       "frame-src https://*.mercadopago.com https://*.mercadolibre.com https://*.mlstatic.com",
       // Bloquea objetos embebidos (Flash, plugins)
       "object-src 'none'",

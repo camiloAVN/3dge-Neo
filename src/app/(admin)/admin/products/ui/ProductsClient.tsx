@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import Image from 'next/image';
-import { createUpdateProduct, deleteProduct, deleteProductImage, uploadProductImage } from '@/actions';
+import { createUpdateProduct, deleteProduct, deleteProductImage, getUploadUrl, saveProductImage } from '@/actions';
 import { useRouter } from 'next/navigation';
 import { LuImagePlus, LuPencil, LuPlus, LuSearch, LuTrash2, LuX } from 'react-icons/lu';
 
@@ -198,13 +198,32 @@ export function ProductsClient({ products, categories }: { products: Product[]; 
       return;
     }
 
-    // Upload pending images
-    if (pendingFiles.length > 0) {
-      for (const file of pendingFiles) {
-        const fd = new FormData();
-        fd.append('file', file);
-        fd.append('productId', result.productId);
-        await uploadProductImage(fd);
+    // Upload pending images via presigned URLs (client → R2 directly)
+    for (const file of pendingFiles) {
+      const presign = await getUploadUrl(file.name, file.type, file.size);
+      if (!presign.ok) {
+        setError(`Error al preparar subida: ${presign.message}`);
+        setLoading(false);
+        return;
+      }
+
+      const upload = await fetch(presign.uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
+
+      if (!upload.ok) {
+        setError('Error al subir la imagen a R2');
+        setLoading(false);
+        return;
+      }
+
+      const save = await saveProductImage(result.productId, presign.publicUrl);
+      if (!save.ok) {
+        setError(`Error al registrar imagen: ${save.message}`);
+        setLoading(false);
+        return;
       }
     }
 
