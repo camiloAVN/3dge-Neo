@@ -6,6 +6,15 @@ import { OrderConfirmationEmail } from '@/emails/OrderConfirmationEmail';
 import { OrderNotificationEmail } from '@/emails/OrderNotificationEmail';
 import type { OrderEmailData } from '@/emails/types';
 
+/*
+ * ADMIN_NOTIFICATION_EMAIL: recibe alertas de nuevas órdenes.
+ * En plan gratuito Resend, este correo DEBE ser el mismo que usaste al crear
+ * la cuenta en resend.com. Para enviar a cualquier dirección, verifica tu
+ * dominio en resend.com/domains y actualiza RESEND_FROM_EMAIL en .env.
+ */
+const FALLBACK_ADMIN_EMAIL =
+  process.env.ADMIN_NOTIFICATION_EMAIL ?? 'atencion@3dge-co.com';
+
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat('es-CO', {
     day: '2-digit',
@@ -17,34 +26,59 @@ function formatDate(date: Date) {
   }).format(date);
 }
 
+async function sendOne(label: string, payload: Parameters<typeof resend.emails.send>[0]) {
+  const { data, error } = await resend.emails.send(payload);
+  if (error) {
+    console.error(`[Email] ${label} FAILED — ${error.name}: ${error.message}`);
+    return false;
+  }
+  console.log(`[Email] ${label} sent — id: ${data?.id}`);
+  return true;
+}
+
 export async function sendOrderEmails(orderId: string) {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('[Email] RESEND_API_KEY not set — skipping');
+    return;
+  }
+
+  console.log('[Email] sendOrderEmails start — orderId:', orderId);
 
   try {
-    const order = await prisma.order.findUnique({
-      where: { id: orderId },
-      include: {
-        user:         { select: { name: true, email: true } },
-        orderAddress: { include: { country: { select: { name: true } } } },
-        orderItems:   { include: { product: { select: { title: true } } } },
-      },
-    });
+    const [order, settings] = await Promise.all([
+      prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          user:         { select: { name: true, email: true } },
+          orderAddress: { include: { country: { select: { name: true } } } },
+          orderItems:   { include: { product: { select: { title: true } } } },
+        },
+      }),
+      prisma.appSettings.findUnique({
+        where: { id: 'singleton' },
+        select: { adminEmail: true },
+      }),
+    ]);
 
-    if (!order || !order.user || !order.orderAddress) return;
+    if (!order?.orderAddress) {
+      console.error('[Email] Order or address not found for:', orderId);
+      return;
+    }
 
-    const settings = await prisma.appSettings.findUnique({
-      where: { id: 'singleton' },
-    });
-
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+    /* Admin email: AppSettings → env var → hardcoded fallback */
+    const adminEmail = settings?.adminEmail?.trim() || FALLBACK_ADMIN_EMAIL;
     const addr = order.orderAddress;
+    const fmt = (n: number) =>
+      new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(n);
 
     const data: OrderEmailData = {
       orderId:       order.id,
       orderDate:     formatDate(order.createdAt),
       transactionId: order.transactionId ?? '—',
       customer: {
-        name:  order.user.name,
-        email: order.user.email,
+        name:  order.user.name  ?? 'Cliente',
+        email: order.user.email ?? '',
       },
       address: {
         firstName:  addr.firstName,
@@ -66,32 +100,33 @@ export async function sendOrderEmails(orderId: string) {
       total:    order.total,
     };
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    console.log('[Email] FROM:', FROM_EMAIL, '| adminTo:', adminEmail, '| customerTo:', order.user.email);
 
-    // 1 — Customer confirmation
-    await resend.emails.send({
+    /* ── 1. Notificación al administrador (siempre) ── */
+    await sendOne('admin-notification', {
       from:    FROM_EMAIL,
-      to:      order.user.email,
-      subject: `¡Compra confirmada! Orden #${orderId.slice(-8).toUpperCase()}`,
-      react:   <OrderConfirmationEmail {...data} />,
+      to:      adminEmail,
+      subject: `🛒 Nueva orden #${orderId.slice(-8).toUpperCase()} · ${data.customer.name} · ${fmt(order.total)}`,
+      react:   (
+        <OrderNotificationEmail
+          {...data}
+          appUrl={appUrl}
+          adminPanelUrl={`${appUrl}/admin/orders`}
+        />
+      ),
     });
 
-    // 2 — Admin notification (only if configured)
-    const adminEmail = settings?.adminEmail?.trim();
-    if (adminEmail) {
-      await resend.emails.send({
+    /* ── 2. Confirmación al cliente ── */
+    if (order.user.email) {
+      await sendOne('customer-confirmation', {
         from:    FROM_EMAIL,
-        to:      adminEmail,
-        subject: `🛒 Nueva orden #${orderId.slice(-8).toUpperCase()} — ${order.user.name}`,
-        react:   (
-          <OrderNotificationEmail
-            {...data}
-            adminPanelUrl={`${appUrl}/admin/orders`}
-          />
-        ),
+        to:      order.user.email,
+        subject: `¡Compra confirmada! Orden #${orderId.slice(-8).toUpperCase()} — 3DGE`,
+        react:   <OrderConfirmationEmail {...data} appUrl={appUrl} />,
       });
     }
+
   } catch (err) {
-    console.error('[send-order-emails]', err);
+    console.error('[send-order-emails] unexpected error:', err);
   }
 }

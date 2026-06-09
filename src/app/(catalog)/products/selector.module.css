@@ -195,37 +195,45 @@
 /* ── RESPONSIVE ≤ 820px ── */
 @media (max-width: 820px) {
   .container { --line: 12px; --border: 12px; }
-  .page { position: relative; min-height: 100dvh; }
+
+  .page {
+    position: relative;
+    inset: auto; /* reset desktop inset:0 */
+    min-height: 100dvh;
+    /* iOS home bar / Android nav bar */
+    padding-bottom: max(var(--border), env(safe-area-inset-bottom, var(--border)));
+  }
+
   .main {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: clamp(8px, 2vw, 14px);
     padding: 14px 0;
   }
 
-  /* NEO — smaller vertical on mobile */
+  /* NEO — narrower so all 3 fit in one row at ≥ 360px */
   .neo {
-    width: clamp(80px, 22vw, 130px);
-    height: clamp(200px, 48vw, 320px);
+    width: clamp(70px, 18vw, 110px);
+    height: clamp(180px, 44vw, 280px);
   }
-  .neo .shapeLabel { font-size: clamp(20px, 5vw, 38px); }
+  .neo .shapeLabel { font-size: clamp(18px, 4.5vw, 34px); }
 
-  /* HEXA — smaller hexagon */
+  /* HEXA — slightly smaller hexagon */
   .hexa {
-    width: clamp(150px, 38vw, 240px);
-    height: clamp(130px, 33vw, 208px);
-    padding: 20px 44px;
+    width: clamp(128px, 33vw, 210px);
+    height: clamp(111px, 28.5vw, 182px);
+    padding: 16px clamp(32px, 9vw, 60px);
   }
-  .hexa .shapeLabel { font-size: clamp(18px, 5vw, 36px); }
+  .hexa .shapeLabel { font-size: clamp(16px, 4.5vw, 32px); }
 
-  /* CREA — smaller hammer */
+  /* CREA — narrower hammer */
   .crea {
-    width: clamp(130px, 32vw, 220px);
-    height: clamp(200px, 48vw, 320px);
+    width: clamp(110px, 28vw, 190px);
+    height: clamp(180px, 44vw, 280px);
   }
-  .crea .shapeLabel { font-size: clamp(16px, 4vw, 30px); }
+  .crea .shapeLabel { font-size: clamp(13px, 3.5vw, 26px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

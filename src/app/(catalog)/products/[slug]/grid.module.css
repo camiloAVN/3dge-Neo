@@ -191,6 +191,18 @@
 @media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 768px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 820px) {
-  .container { --line: 12px; --border: 12px; }
+  .container {
+    --line: 12px;
+    --border: 12px;
+    /* iOS home bar / Android nav bar */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .topBar {
+    flex-wrap: wrap;
+    padding: 14px clamp(14px, 3.5vw, 24px);
+    gap: 10px;
+  }
+  .topTitle { font-size: clamp(18px, 5vw, 28px); }
+  .gridArea { padding: clamp(20px, 5vw, 40px) clamp(16px, 4vw, 36px); }
 }
-@media (max-width: 480px)  { .grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }

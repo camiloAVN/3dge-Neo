@@ -554,8 +554,11 @@
 
   .hero {
     position: relative;
-    min-height: 100svh; /* svh avoids mobile browser chrome offset */
+    inset: auto; /* reset desktop inset:0 — relative needs no inset */
+    min-height: 100dvh; /* dvh tracks the dynamic viewport (toolbar hides on scroll) */
     overflow: visible;
+    /* Extra bottom padding for iOS home bar / Android nav bar */
+    padding-bottom: max(var(--border), env(safe-area-inset-bottom, var(--border)));
   }
 
   /* Both bands become vertical columns */
@@ -618,9 +621,18 @@
   .photo    { min-height: 220px; flex: none; }
   .photoBig { min-height: 300px; flex: none; }
 
-  /* Overlay nav */
-  .ovRow   { flex-direction: column; }
-  .ovLabel { font-size: clamp(28px, 10vw, 52px); }
+  /* Overlay nav — scrollable on mobile so all 4 items are reachable */
+  .overlay {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ovRow   {
+    flex: none;        /* don't flex-grow — let items be their natural height */
+    min-height: 0;
+    flex-direction: column;
+  }
+  .ovItem  { flex: none; min-height: 80px; }
+  .ovLabel { font-size: clamp(24px, 8.5vw, 44px); }
 }
 
 

@@ -44,7 +44,7 @@ export default function HeroPage() {
     fetchHeroImages().then(setImgs);
 
     const syncOverflow = () => {
-      document.body.style.overflow = window.innerWidth > 820 ? 'hidden' : 'auto';
+      document.body.style.overflow = window.innerWidth >= 821 ? 'hidden' : 'auto';
     };
     document.body.style.background = '#141210';
     syncOverflow();

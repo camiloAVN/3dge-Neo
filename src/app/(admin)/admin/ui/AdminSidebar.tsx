@@ -27,15 +27,20 @@ const navItems = [
   { label: 'Configuración', href: '/admin/configuracion',  icon: LuSettings,                  num: '07' },
 ];
 
-export function AdminSidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function AdminSidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
 
       {/* ── Header: logo + admin badge ── */}
       <div className={styles.header}>
-        <Link href="/admin" className={styles.brandLink}>
+        <Link href="/admin" className={styles.brandLink} onClick={onClose}>
           <Brand3DGE size={20} priority />
         </Link>
         <span className={styles.adminBadge}>Admin</span>
@@ -49,6 +54,7 @@ export function AdminSidebar() {
             <Link
               key={href}
               href={href}
+              onClick={onClose}
               className={`${styles.navItem} ${active ? styles.navItemActive : ''}`}
             >
               <span className={styles.navNum}>{num}</span>
@@ -61,12 +67,12 @@ export function AdminSidebar() {
 
       {/* ── Footer actions ── */}
       <div className={styles.footer}>
-        <Link href="/" className={styles.footerItem}>
+        <Link href="/" onClick={onClose} className={styles.footerItem}>
           <LuArrowLeft size={13} style={{ flexShrink: 0 }} />
           Volver a la tienda
         </Link>
         <button
-          onClick={() => signOut({ callbackUrl: '/' })}
+          onClick={() => { onClose?.(); signOut({ callbackUrl: '/' }); }}
           className={styles.footerItem}
         >
           <LuLogOut size={13} style={{ flexShrink: 0 }} />

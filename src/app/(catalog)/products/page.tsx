@@ -9,7 +9,7 @@ import styles from './selector.module.css';
 export default function ProductsPage() {
   useEffect(() => {
     const sync = () => {
-      document.body.style.overflow = window.innerWidth > 820 ? 'hidden' : 'auto';
+      document.body.style.overflow = window.innerWidth >= 821 ? 'hidden' : 'auto';
     };
     document.body.style.background = '#141210';
     sync();
