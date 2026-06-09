@@ -43,3 +43,4 @@ export * from './product/delete-product'
 
 export * from './settings/get-settings'
 export * from './settings/update-settings'
+export * from './settings/update-hero-image'

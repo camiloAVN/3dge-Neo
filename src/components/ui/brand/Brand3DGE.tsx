@@ -15,7 +15,7 @@ interface Props {
  * Inherits font-family, font-weight, font-size, and color from the parent.
  */
 export function Brand3DGE({ size = 22, className, style, priority }: Props) {
-  const gap = Math.max(5, Math.round(size * 0.32));
+  const gap = Math.max(7, Math.round(size * 0.52));
 
   return (
     <span
@@ -36,7 +36,7 @@ export function Brand3DGE({ size = 22, className, style, priority }: Props) {
         priority={priority}
         style={{ display: 'block', flexShrink: 0, objectFit: 'contain' }}
       />
-      3<span style={{ fontStyle: 'italic' }}>D</span>GE
+      <span style={{ letterSpacing: '-0.03em' }}>3<span style={{ fontStyle: 'italic' }}>D</span>GE</span>
     </span>
   );
 }

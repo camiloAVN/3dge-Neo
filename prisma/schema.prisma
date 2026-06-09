@@ -13,8 +13,11 @@ enum Role {
 }
 
 model AppSettings {
-  id         String @id @default("singleton")
-  adminEmail String @default("")
+  id             String  @id @default("singleton")
+  adminEmail     String  @default("")
+  heroImageMain  String? // photoBig slot (top band, right)
+  heroImageLeft  String? // detail photo slot (bottom band, left)
+  heroImageRight String? // coat photo slot (bottom band, right)
 }
 
 model Category {

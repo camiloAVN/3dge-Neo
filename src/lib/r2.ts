@@ -1,4 +1,4 @@
-import { S3Client } from '@aws-sdk/client-s3';
+import { S3Client, type S3ClientConfig } from '@aws-sdk/client-s3';
 
 export const r2 = new S3Client({
   region: 'auto',
@@ -9,9 +9,9 @@ export const r2 = new S3Client({
   },
   // Prevents SDK v3 from auto-adding CRC32 checksum headers that R2
   // doesn't support in presigned PUT requests from the browser.
-  requestChecksumCalculation: 'when_required',
-  responseChecksumValidation: 'when_required',
-});
+  requestChecksumCalculation: 'WHEN_REQUIRED',
+  responseChecksumValidation: 'WHEN_REQUIRED',
+} satisfies S3ClientConfig);
 
 export const R2_BUCKET     = process.env.R2_BUCKET_NAME ?? '';
 export const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? '';

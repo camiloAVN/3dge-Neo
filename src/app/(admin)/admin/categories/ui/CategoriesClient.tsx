@@ -156,13 +156,9 @@ export function CategoriesClient({ categories }: { categories: Category[] }) {
           <h1 className="text-2xl font-bold text-[#111111]">Categorías</h1>
           <p className="text-sm text-[#444444] mt-1">{categories.length} categorías registradas</p>
         </div>
-        <button
-          onClick={openNew}
-          className="flex items-center gap-2 bg-[#D61C1C] hover:bg-[#b81818] text-white text-sm font-medium px-4 py-2.5 rounded transition-colors"
-        >
-          <LuPlus className="w-4 h-4" />
-          Nueva categoría
-        </button>
+        <span className="text-xs text-[#444444] bg-[#F8F9FA] border border-[#E5E5E5] rounded px-3 py-2">
+          Las 3 categorías son fijas
+        </span>
       </div>
 
       {/* Table */}

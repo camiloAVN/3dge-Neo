@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LuShoppingCart } from 'react-icons/lu';
@@ -10,10 +11,28 @@ import { Brand3DGE } from '@/components/ui/brand/Brand3DGE';
 import { NeoCartModal } from '@/components/cart/neo-cart/NeoCartModal';
 import styles from './hero.module.css';
 
+interface HeroImages {
+  heroImageMain:  string | null;
+  heroImageLeft:  string | null;
+  heroImageRight: string | null;
+}
+
+async function fetchHeroImages(): Promise<HeroImages> {
+  try {
+    const res = await fetch('/api/hero-images', { next: { revalidate: 60 } });
+    if (!res.ok) return { heroImageMain: null, heroImageLeft: null, heroImageRight: null };
+    return res.json();
+  } catch {
+    return { heroImageMain: null, heroImageLeft: null, heroImageRight: null };
+  }
+}
+
+
 export default function HeroPage() {
   const [navOpen,  setNavOpen]  = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [loaded,   setLoaded]   = useState(false);
+  const [imgs, setImgs] = useState<HeroImages>({ heroImageMain: null, heroImageLeft: null, heroImageRight: null });
   const router     = useRouter();
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
@@ -22,6 +41,8 @@ export default function HeroPage() {
 
   useEffect(() => {
     setLoaded(true);
+    fetchHeroImages().then(setImgs);
+
     const syncOverflow = () => {
       document.body.style.overflow = window.innerWidth > 820 ? 'hidden' : 'auto';
     };
@@ -45,7 +66,6 @@ export default function HeroPage() {
   const open  = () => setNavOpen(true);
   const close = () => setNavOpen(false);
 
-  /* Cart cell click: redirect if empty, open modal if has items */
   const handleCartClick = () => {
     if (totalItems === 0) router.push('/products');
     else setCartOpen(true);
@@ -71,22 +91,17 @@ export default function HeroPage() {
             </button>
 
             <div className={`${styles.block} ${styles.blockBlue}`}>
-              {/* TOP: Brand mark (replaces EST.2024) */}
               <div className={styles.blueTopBrand}>
                 <Brand3DGE size={26} priority />
               </div>
-
-              {/* MIDDLE: vertical label — hidden on mobile */}
               <div className={styles.vert}>Orden en la pared</div>
-
-              {/* BOTTOM: Cart button (replaces brand mark) */}
               <button
                 className={styles.blueCartBtn}
                 onClick={handleCartClick}
                 aria-label={totalItems === 0 ? 'Ver colecciones' : `Carrito — ${totalItems} productos`}
               >
                 <div style={{ position: 'relative', display: 'inline-flex' }}>
-                  <LuShoppingCart style={{ width: 'clamp(20px,2.2vw,30px)', height: 'clamp(20px,2.2vw,30px)' }} />
+                  <LuShoppingCart style={{ width: 'clamp(20px,2.2vw,28px)', height: 'clamp(20px,2.2vw,28px)' }} />
                   {loaded && totalItems > 0 && (
                     <span className={styles.blueCartCount}>{totalItems}</span>
                   )}
@@ -95,7 +110,7 @@ export default function HeroPage() {
             </div>
           </div>
 
-          {/* Yellow block — main brand cell */}
+          {/* Yellow block */}
           <div className={`${styles.block} ${styles.blockYellow} ${styles.hoverable}`}>
             <div className={styles.brandline}>
               <span className={styles.brandlineDot} />
@@ -115,11 +130,17 @@ export default function HeroPage() {
             </button>
           </div>
 
-          {/* ── IMAGE SLOT (product photo) ── */}
+          {/* IMAGE SLOT — main */}
           <figure className={`${styles.cell} ${styles.photo} ${styles.photoBig} ${styles.hoverable}`}>
             <div className={styles.ph}>
-              <div className={styles.frame} />
-              <div className={styles.cap}>Foto — producto destacado</div>
+              {imgs.heroImageMain ? (
+                <Image src={imgs.heroImageMain} alt="Producto destacado" fill className="object-cover" sizes="(max-width:820px) 100vw, 45vw" />
+              ) : (
+                <>
+                  <div className={styles.frame} />
+                  <div className={styles.cap}>Foto — producto destacado</div>
+                </>
+              )}
             </div>
           </figure>
         </div>
@@ -127,18 +148,24 @@ export default function HeroPage() {
         {/* — BANDA INFERIOR — */}
         <div className={`${styles.band} ${styles.bandBottom}`}>
 
-          {/* Key-holder detail photo */}
+          {/* Photo left */}
           <figure className={`${styles.cell} ${styles.photo} ${styles.hoverable}`}>
             <div className={styles.ph}>
-              <div className={styles.frame} />
-              <div className={styles.cap}>Foto — detalle llavero</div>
+              {imgs.heroImageLeft ? (
+                <Image src={imgs.heroImageLeft} alt="Detalle llavero" fill className="object-cover" sizes="(max-width:820px) 100vw, 25vw" />
+              ) : (
+                <>
+                  <div className={styles.frame} />
+                  <div className={styles.cap}>Foto — detalle llavero</div>
+                </>
+              )}
             </div>
             <span className={styles.tag}>
               <span className={styles.tagAccent}>01</span> · Organizador de llaves
             </span>
           </figure>
 
-          {/* Red block — jacket collection */}
+          {/* Red block */}
           <div className={`${styles.block} ${styles.blockRed} ${styles.hoverable}`}>
             <div className={styles.featIdx}>02 — Colección</div>
             <h2 className={styles.featTitle}>Organizador de chaquetas</h2>
@@ -152,11 +179,17 @@ export default function HeroPage() {
             </Link>
           </div>
 
-          {/* Coat photo */}
+          {/* Photo right */}
           <figure className={`${styles.cell} ${styles.photo} ${styles.hoverable}`}>
             <div className={styles.ph}>
-              <div className={styles.frame} />
-              <div className={styles.cap}>Foto — abrigo colgado</div>
+              {imgs.heroImageRight ? (
+                <Image src={imgs.heroImageRight} alt="Abrigo colgado" fill className="object-cover" sizes="(max-width:820px) 100vw, 25vw" />
+              ) : (
+                <>
+                  <div className={styles.frame} />
+                  <div className={styles.cap}>Foto — abrigo colgado</div>
+                </>
+              )}
             </div>
           </figure>
         </div>
@@ -215,4 +248,3 @@ export default function HeroPage() {
     </div>
   );
 }
-

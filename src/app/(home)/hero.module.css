@@ -3,18 +3,18 @@
    Neoplastic grid composition: ink frame + color cells
    ============================================================ */
 
-/* === ROOT CONTAINER (variables inherited by hero + overlay) === */
+/* === ROOT CONTAINER === */
 .container {
-  --ink: #141210;
-  --paper: #f6f4ee;
-  --red: #e63b22;
+  --ink:    #141210;
+  --paper:  #f6f4ee;
+  --red:    #e63b22;
   --yellow: #f5c200;
-  --blue: #1f3fd6;
-  --line: 18px;
+  --blue:   #1f3fd6;
+  --line:   18px;
   --border: 20px;
-  --serif: var(--font-bodoni-moda), Georgia, serif;
-  --mono: var(--font-space-mono), ui-monospace, monospace;
-  --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --serif:  var(--font-bodoni-moda), Georgia, serif;
+  --mono:   var(--font-space-mono), ui-monospace, monospace;
+  --sans:   "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-family: var(--sans);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -29,23 +29,26 @@
   display: flex;
   flex-direction: column;
   gap: var(--line);
+  overflow: hidden;
 }
 
 .band {
   display: flex;
   gap: var(--line);
   min-height: 0;
+  overflow: hidden;
 }
 
-.bandTop  { flex: 1.42; }
-.bandBottom { flex: 1; }
+/* Top band slightly taller — leaves comfortable room for bottom */
+.bandTop    { flex: 56 1 0; }
+.bandBottom { flex: 44 1 0; }
 
 .colLeft {
   display: flex;
   flex-direction: column;
   gap: var(--line);
   flex: 0 0 13.5%;
-  min-width: 128px;
+  min-width: 120px;
   min-height: 0;
 }
 
@@ -64,7 +67,7 @@
 /* === MENU BUTTON === */
 .menuCell {
   flex: 0 0 auto;
-  height: 104px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,15 +77,15 @@
 }
 
 .burger {
-  width: 48px;
-  height: 34px;
+  width: 44px;
+  height: 30px;
   position: relative;
 }
 
 .burgerSpan {
   position: absolute;
   left: 0;
-  height: 5px;
+  height: 4px;
   width: 100%;
   background: var(--ink);
   border-radius: 1px;
@@ -90,7 +93,7 @@
 }
 
 .burgerSpan:nth-child(1) { top: 0; }
-.burgerSpan:nth-child(2) { top: 50%; transform: translateY(-50%); width: 72%; }
+.burgerSpan:nth-child(2) { top: 50%; transform: translateY(-50%); width: 68%; }
 .burgerSpan:nth-child(3) { bottom: 0; }
 .menuCell:hover .burgerSpan:nth-child(2) { width: 100%; }
 
@@ -106,7 +109,7 @@
 
 .blockBlue   { background: var(--blue);   color: var(--paper); }
 .blockYellow { background: var(--yellow); color: var(--ink);   flex: 0 0 30%; }
-.blockRed    { background: var(--red);    color: var(--paper); flex: 0 0 41%; }
+.blockRed    { background: var(--red);    color: var(--paper); flex: 0 0 40%; }
 
 /* === HOVERABLE (lift + inner ring) === */
 .hoverable { cursor: pointer; }
@@ -121,111 +124,131 @@
 .hoverable:hover { transform: translateY(-4px); }
 .hoverable:hover::after { box-shadow: inset 0 0 0 9px var(--ink); }
 
-/* === YELLOW BLOCK — brand / tagline / CTA === */
+/* ============================================================
+   YELLOW BLOCK — brand / tagline / CTA
+   Layout: brandline pinned top, rest pinned bottom via margin-top:auto
+   on headTitle. headSub is the only shrinkable element.
+   ============================================================ */
 .blockYellow {
-  padding: clamp(20px,2.4vw,40px);
+  padding: clamp(16px, 1.8vw, 36px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .brandline {
   font-family: var(--mono);
-  font-size: clamp(10px,.78vw,13px);
-  letter-spacing: .18em;
+  font-size: clamp(9px, .72vw, 12px);
+  letter-spacing: .16em;
   text-transform: uppercase;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .brandlineDot {
-  width: 11px;
-  height: 11px;
+  width: 10px;
+  height: 10px;
   background: var(--ink);
   display: inline-block;
   flex-shrink: 0;
 }
 
+/* Pushes itself (and everything below) to bottom of block */
 .headTitle {
   font-family: var(--serif);
   font-weight: 900;
   font-style: normal;
-  font-size: clamp(30px,3.5vw,62px);
+  font-size: clamp(22px, 3vw, 58px);
   line-height: .96;
   letter-spacing: -.015em;
   margin-top: auto;
   text-wrap: balance;
+  flex-shrink: 0; /* title never compresses — headSub takes the hit */
 }
 
 .rule {
-  height: 6px;
+  height: 5px;
   background: var(--ink);
-  width: 84px;
-  margin: clamp(14px,1.4vw,22px) 0;
+  width: 72px;
+  margin: clamp(10px, 1.2vw, 20px) 0;
   flex-shrink: 0;
 }
 
+/* headSub is the safety valve: it compresses/hides before button is lost */
 .headSub {
-  font-size: clamp(12px,.92vw,15.5px);
+  font-size: clamp(11px, .86vw, 14.5px);
   line-height: 1.5;
-  max-width: 34ch;
+  max-width: 32ch;
   color: var(--ink);
+  flex-shrink: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .cta {
-  margin-top: clamp(16px,1.8vw,26px);
+  margin-top: clamp(10px, 1.2vw, 20px);
   align-self: flex-start;
   font-family: var(--mono);
   font-weight: 700;
-  font-size: clamp(11px,.82vw,14px);
+  font-size: clamp(10px, .78vw, 13px);
   letter-spacing: .06em;
   text-transform: uppercase;
   background: var(--ink);
   color: var(--yellow);
   border: none;
   cursor: pointer;
-  padding: 13px 20px;
+  padding: 11px 18px;
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-shrink: 0; /* button always visible */
   transition: gap .3s ease, background .3s ease, color .3s ease;
 }
-.cta:hover { gap: 20px; background: var(--blue); color: var(--paper); }
+.cta:hover { gap: 18px; background: var(--blue); color: var(--paper); }
 
-/* === BLUE BLOCK — vertical label === */
+/* ============================================================
+   BLUE BLOCK — vertical label + cart
+   ============================================================ */
 .blockBlue {
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
-  padding: 18px 0;
+  padding: 18px 0 14px;
+  gap: 6px;
 }
 
-/* TOP: brand mark (replaces EST.2024) */
 .blueTopBrand {
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--serif);
   font-weight: 900;
-  font-size: clamp(16px, 1.6vw, 26px);
+  font-size: clamp(14px, 1.4vw, 24px);
   color: var(--paper);
   letter-spacing: -.05em;
+  flex-shrink: 0;
 }
 
 .vert {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   align-self: center;
-  margin: auto 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
   font-family: var(--mono);
   font-weight: 700;
-  letter-spacing: .34em;
+  letter-spacing: .2em;
   text-transform: uppercase;
-  font-size: clamp(11px,.82vw,14px);
+  font-size: clamp(9px, .68vw, 11px);
+  overflow: hidden;
+  min-height: 0;
 }
 
-/* BOTTOM: cart button (replaces brand mark) */
 .blueCartBtn {
   display: flex;
   align-items: center;
@@ -234,7 +257,7 @@
   border: none;
   cursor: pointer;
   color: var(--paper);
-  padding: 0;
+  padding: 4px 0;
   width: 100%;
   flex-shrink: 0;
   transition: color .25s ease;
@@ -258,63 +281,76 @@
   line-height: 1;
 }
 
-/* === RED BLOCK — feature collection === */
+/* ============================================================
+   RED BLOCK — feature collection
+   Same pattern as yellow: featIdx top, title+rest bottom.
+   featSub is the only shrinkable element.
+   ============================================================ */
 .blockRed {
-  padding: clamp(20px,2.4vw,42px);
+  padding: clamp(16px, 1.8vw, 38px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .featIdx {
   font-family: var(--mono);
-  font-size: clamp(10px,.78vw,13px);
+  font-size: clamp(9px, .72vw, 12px);
   font-weight: 700;
-  letter-spacing: .18em;
+  letter-spacing: .16em;
   text-transform: uppercase;
-}
-
-.featTitle {
-  font-family: var(--serif);
-  font-weight: 900;
-  font-size: clamp(28px,3.1vw,54px);
-  line-height: .95;
-  letter-spacing: -.01em;
-  margin-top: auto;
-}
-
-.rulePaper {
-  height: 6px;
-  background: var(--paper);
-  width: 84px;
-  margin: clamp(12px,1.3vw,20px) 0;
   flex-shrink: 0;
 }
 
+/* Pushes itself and everything below to the bottom */
+.featTitle {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(22px, 2.8vw, 50px);
+  line-height: .95;
+  letter-spacing: -.01em;
+  margin-top: auto;
+  flex-shrink: 0; /* title never compresses */
+}
+
+.rulePaper {
+  height: 5px;
+  background: var(--paper);
+  width: 72px;
+  margin: clamp(10px, 1.1vw, 18px) 0;
+  flex-shrink: 0;
+}
+
+/* featSub compresses before the button is lost */
 .featSub {
-  font-size: clamp(12px,.9vw,15px);
+  font-size: clamp(11px, .85vw, 14px);
   line-height: 1.5;
-  max-width: 34ch;
+  max-width: 32ch;
+  flex-shrink: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .featLink {
-  margin-top: clamp(14px,1.6vw,22px);
+  margin-top: clamp(10px, 1.1vw, 18px);
   align-self: flex-start;
   font-family: var(--mono);
   font-weight: 700;
-  font-size: clamp(11px,.8vw,13.5px);
+  font-size: clamp(10px, .76vw, 13px);
   letter-spacing: .06em;
   text-transform: uppercase;
   color: var(--paper);
-  border-bottom: 3px solid var(--paper);
+  border-bottom: 2px solid var(--paper);
   padding-bottom: 3px;
   text-decoration: none;
+  flex-shrink: 0; /* button always visible */
   transition: padding-left .3s ease;
 }
 .featLink:hover { padding-left: 8px; }
 
 /* === PHOTO PLACEHOLDER CELLS === */
 .photo    { flex: 1; }
-.photoBig { flex: 2.05; }
+.photoBig { flex: 2.1; }
 
 .ph {
   position: absolute;
@@ -329,16 +365,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  padding: 18px;
+  gap: 12px;
+  padding: 16px;
   text-align: center;
   transition: transform .5s cubic-bezier(.2,.8,.2,1);
 }
 .hoverable:hover .ph { transform: scale(1.045); }
 
 .frame {
-  width: clamp(34px,3vw,52px);
-  height: clamp(34px,3vw,52px);
+  width: clamp(30px, 2.6vw, 48px);
+  height: clamp(30px, 2.6vw, 48px);
   border: 3px solid var(--ink);
   position: relative;
   flex-shrink: 0;
@@ -353,13 +389,13 @@
 
 .cap {
   font-family: var(--mono);
-  font-size: clamp(10px,.74vw,12.5px);
+  font-size: clamp(9px, .7vw, 12px);
   letter-spacing: .08em;
   text-transform: uppercase;
   color: #6c685f;
   font-weight: 700;
-  max-width: 24ch;
-  line-height: 1.45;
+  max-width: 22ch;
+  line-height: 1.4;
 }
 
 .tag {
@@ -370,9 +406,9 @@
   color: var(--paper);
   font-family: var(--mono);
   font-weight: 700;
-  font-size: clamp(11px,.82vw,14px);
+  font-size: clamp(10px, .76vw, 13px);
   letter-spacing: .04em;
-  padding: 11px 16px;
+  padding: 9px 14px;
   z-index: 2;
 }
 
@@ -409,20 +445,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px clamp(20px,2vw,32px);
+  padding: 16px clamp(18px, 1.8vw, 30px);
 }
 
 .ovBrand {
   font-family: var(--serif);
   font-weight: 900;
-  font-size: clamp(22px,2vw,32px);
+  font-size: clamp(20px, 1.8vw, 30px);
   letter-spacing: -.02em;
   color: var(--ink);
 }
 
 .ovClose {
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   position: relative;
   background: none;
   border: none;
@@ -434,7 +470,7 @@
   top: 50%;
   left: 0;
   width: 100%;
-  height: 5px;
+  height: 4px;
   background: var(--ink);
   border-radius: 1px;
 }
@@ -452,10 +488,10 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: clamp(20px,2.4vw,40px);
+  padding: clamp(16px, 2vw, 36px);
   text-decoration: none;
   opacity: 0;
-  transform: translateY(26px);
+  transform: translateY(24px);
   transition:
     opacity .5s ease,
     transform .5s cubic-bezier(.2,.8,.2,1),
@@ -463,24 +499,18 @@
     color .35s ease;
 }
 
-.ovItemVisible {
-  opacity: 1;
-  transform: translateY(0);
-}
+.ovItemVisible { opacity: 1; transform: translateY(0); }
 
-/* Colored variants */
 .ovItemA { background: var(--yellow); color: var(--ink); }
 .ovItemB { background: var(--red);    color: var(--paper); }
 .ovItemC { background: var(--blue);   color: var(--paper); }
 .ovItemD { background: var(--paper);  color: var(--ink); }
 
-/* Staggered entrance delays */
 .ovItemA.ovItemVisible { transition-delay: .14s; }
 .ovItemB.ovItemVisible { transition-delay: .22s; }
 .ovItemC.ovItemVisible { transition-delay: .30s; }
 .ovItemD.ovItemVisible { transition-delay: .38s; }
 
-/* Hover states */
 .ovItemA:hover { background: var(--ink); color: var(--yellow); }
 .ovItemB:hover { background: var(--ink); color: var(--red); }
 .ovItemC:hover { background: var(--ink); color: var(--blue); }
@@ -489,14 +519,14 @@
 .ovNum {
   font-family: var(--mono);
   font-weight: 700;
-  font-size: clamp(11px,.85vw,14px);
-  letter-spacing: .16em;
+  font-size: clamp(10px, .8vw, 13px);
+  letter-spacing: .14em;
 }
 
 .ovLabel {
   font-family: var(--serif);
   font-weight: 900;
-  font-size: clamp(34px,5vw,86px);
+  font-size: clamp(30px, 4.6vw, 80px);
   line-height: .92;
   letter-spacing: -.02em;
 }
@@ -504,85 +534,124 @@
 .ovArrow {
   font-family: var(--mono);
   font-weight: 700;
-  font-size: clamp(13px,1vw,18px);
+  font-size: clamp(12px, .9vw, 16px);
   transform: translateX(0);
   transition: transform .35s ease;
   align-self: flex-end;
 }
-.ovItem:hover .ovArrow { transform: translateX(14px); }
+.ovItem:hover .ovArrow { transform: translateX(12px); }
+
 
 /* ============================================================
-   RESPONSIVE ≤ 820 px
+   RESPONSIVE ≤ 820px  (mobile / small tablet)
+   Hero scrolls; bands stack vertically; each block has fixed height
    ============================================================ */
 @media (max-width: 820px) {
   .container {
-    --line: 12px;
+    --line:   12px;
     --border: 12px;
   }
 
   .hero {
     position: relative;
-    min-height: 100vh;
+    min-height: 100svh; /* svh avoids mobile browser chrome offset */
+    overflow: visible;
   }
 
-  .band { flex-direction: column; }
-  .bandTop { flex: none; }
+  /* Both bands become vertical columns */
+  .band { flex-direction: column; overflow: visible; }
+  .bandTop    { flex: none; }
+  .bandBottom { flex: none; }
 
+  /* colLeft: horizontal strip at top of bandTop */
   .colLeft {
     flex: none;
     min-width: 0;
     flex-direction: row;
+    height: auto;
   }
 
   /* Compact menu button */
-  .menuCell { flex: 0 0 58px; width: 58px; height: auto; min-height: 58px; }
+  .menuCell {
+    flex: 0 0 56px;
+    width: 56px;
+    height: auto;
+    min-height: 56px;
+  }
 
-  /* Blue block: compact horizontal strip — logo left, cart right */
+  /* Blue block: horizontal strip — logo left, cart right */
   .blockBlue {
     flex: 1;
-    padding: 0 16px;
+    padding: 0 14px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    min-height: 58px;
+    min-height: 56px;
+    gap: 0;
   }
 
-  /* Hide vertical text on mobile */
   .vert { display: none; }
 
-  /* Smaller brand mark on mobile */
-  .blueTopBrand {
-    font-size: clamp(14px, 5vw, 20px);
+  .blueTopBrand { font-size: clamp(13px, 4.5vw, 19px); }
+  .blueCartBtn  { width: auto; padding: 0; }
+
+  /* Yellow and red blocks: taller on mobile, auto height with minimum */
+  .blockYellow {
+    flex: none;
+    min-height: 300px;
+    padding: clamp(18px, 5vw, 28px);
   }
 
-  /* Cart button compact */
-  .blueCartBtn { width: auto; padding: 0 4px; }
+  .headTitle { font-size: clamp(28px, 7.5vw, 52px); }
+  .headSub   { font-size: clamp(12px, 3.5vw, 15px); max-width: 40ch; }
 
-  .blockYellow { flex: none; min-height: 340px; }
-  .blockRed    { flex: none; min-height: 300px; }
-  .photo       { min-height: 240px; flex: none; }
-  .photoBig    { min-height: 320px; }
+  .blockRed {
+    flex: none;
+    min-height: 280px;
+    padding: clamp(18px, 5vw, 28px);
+  }
 
+  .featTitle { font-size: clamp(26px, 7vw, 48px); }
+  .featSub   { font-size: clamp(12px, 3.5vw, 14px); max-width: 40ch; }
+
+  /* Photo cells: fixed heights on mobile */
+  .photo    { min-height: 220px; flex: none; }
+  .photoBig { min-height: 300px; flex: none; }
+
+  /* Overlay nav */
   .ovRow   { flex-direction: column; }
-  .ovLabel { font-size: clamp(30px,11vw,56px); }
+  .ovLabel { font-size: clamp(28px, 10vw, 52px); }
 }
+
+
+/* ============================================================
+   SHORT SCREENS  (desktop / laptop with limited height)
+   Hide subtexts so title + button always show
+   ============================================================ */
+@media (max-height: 660px) and (min-width: 821px) {
+  .headSub  { display: none; }
+  .featSub  { display: none; }
+  .rule     { margin: 8px 0; }
+  .rulePaper{ margin: 8px 0; }
+  .cta      { margin-top: 10px; }
+  .featLink { margin-top: 10px; }
+}
+
+/* Very short: also compact the title */
+@media (max-height: 560px) and (min-width: 821px) {
+  .headTitle { font-size: clamp(18px, 2.4vw, 40px); }
+  .featTitle { font-size: clamp(18px, 2.2vw, 38px); }
+  .cta       { padding: 9px 14px; }
+}
+
 
 /* ============================================================
    REDUCED MOTION
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
-  .cell,
-  .block,
-  .menuCell,
-  .burgerSpan,
-  .hoverable,
-  .hoverable::after,
-  .ph,
-  .cta,
-  .featLink,
-  .ovItem,
-  .ovArrow,
-  .overlay {
+  .cell, .block, .menuCell, .burgerSpan,
+  .hoverable, .hoverable::after, .ph,
+  .cta, .featLink, .ovItem, .ovArrow, .overlay {
     transition: none !important;
   }
 }
