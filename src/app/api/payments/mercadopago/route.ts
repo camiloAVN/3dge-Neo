@@ -10,7 +10,7 @@ import { sendOrderEmails } from '@/actions/order/send-order-emails';
  * Template: id:<data.id>;request-id:<x-request-id>;ts:<ts>;
  * Docs: https://www.mercadopago.com.co/developers/es/docs/your-integrations/notifications/webhooks
  */
-function verifySignature(request: Request, dataId: string, rawBody: string): boolean {
+function verifySignature(request: Request, dataId: string): boolean {
   const secret = process.env.MP_WEBHOOK_SECRET;
   if (!secret) return true; // skip in dev when secret is not configured
 
@@ -32,11 +32,11 @@ function verifySignature(request: Request, dataId: string, rawBody: string): boo
 
 export async function POST(request: Request) {
   try {
-    const rawBody = await request.text();
+    const text = await request.text();
     let body: Record<string, unknown>;
 
     try {
-      body = JSON.parse(rawBody);
+      body = JSON.parse(text);
     } catch {
       return Response.json({ received: true }, { status: 200 });
     }
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     }
 
     // Reject notifications that fail signature verification
-    if (!verifySignature(request, dataId, rawBody)) {
+    if (!verifySignature(request, dataId)) {
       console.warn('[MP Webhook] invalid signature — request rejected');
       return Response.json({ received: false }, { status: 401 });
     }
