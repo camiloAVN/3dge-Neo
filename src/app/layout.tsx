@@ -10,6 +10,10 @@ export const metadata: Metadata = {
     default: '3DGE — Organizadores de pared',
   },
   description: '3DGE — Organizadores de pared con estilo neoplasticista.',
+  icons: {
+    icon: '/imgs/logo.png',
+    apple: '/imgs/logo.png',
+  },
 };
 
 export default function RootLayout({
