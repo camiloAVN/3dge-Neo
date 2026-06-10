@@ -72,7 +72,7 @@ export function AdminSidebar({ isOpen, onClose }: SidebarProps) {
           Volver a la tienda
         </Link>
         <button
-          onClick={() => { onClose?.(); signOut({ callbackUrl: '/' }); }}
+          onClick={() => { onClose?.(); signOut({ callbackUrl: window.location.origin }); }}
           className={styles.footerItem}
         >
           <LuLogOut size={13} style={{ flexShrink: 0 }} />

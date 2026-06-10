@@ -37,7 +37,7 @@ export function CuentaTiles({ isAdmin }: Props) {
         )}
 
         <button
-          onClick={() => signOut({ callbackUrl: '/' })}
+          onClick={() => signOut({ callbackUrl: window.location.origin })}
           className={`${styles.tile} ${styles.tileInk}`}
         >
           <span className={styles.tileNum}>{isAdmin ? '04' : '03'}</span>

@@ -85,7 +85,7 @@ export const SideBar = () => {
                 Mis pedidos
               </Link>
               <button
-                onClick={() => { closeMenu(); signOut({ callbackUrl: '/' }); }}
+                onClick={() => { closeMenu(); signOut({ callbackUrl: window.location.origin }); }}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded text-sm text-[#111111] hover:bg-[#F8F9FA] group transition-colors"
               >
                 <LuLogOut className="w-4 h-4 text-[#444444] group-hover:text-[#D61C1C] flex-shrink-0 transition-colors" />
@@ -114,7 +114,7 @@ export const SideBar = () => {
                 Panel administrativo
               </Link>
               <button
-                onClick={() => { closeMenu(); signOut({ callbackUrl: '/' }); }}
+                onClick={() => { closeMenu(); signOut({ callbackUrl: window.location.origin }); }}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded text-sm text-[#111111] hover:bg-[#F8F9FA] group transition-colors"
               >
                 <LuLogOut className="w-4 h-4 text-[#444444] group-hover:text-[#D61C1C] flex-shrink-0 transition-colors" />
