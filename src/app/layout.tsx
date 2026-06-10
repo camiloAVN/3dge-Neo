@@ -10,10 +10,6 @@ export const metadata: Metadata = {
     default: '3DGE — Organizadores de pared',
   },
   description: '3DGE — Organizadores de pared con estilo neoplasticista.',
-  icons: {
-    icon: '/imgs/logo.png',
-    apple: '/imgs/logo.png',
-  },
 };
 
 export default function RootLayout({
@@ -23,6 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <link rel="icon" href="/imgs/logo.png" type="image/png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${titleFont.variable} ${bodoniModa.variable} ${spaceMono.variable} antialiased bg-white text-[#111111]`}
       >
