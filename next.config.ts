@@ -64,6 +64,17 @@ const nextConfig: NextConfig = {
       ),
     ],
   },
+  async redirects() {
+    if (process.env.NODE_ENV !== 'production') return [];
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'header', key: 'x-forwarded-proto', value: 'http' }],
+        destination: 'https://www.3dge-co.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
